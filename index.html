@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AFRIESSENCE — WHERE BEAUTY MEETS RADIANCE</title>
+<meta name="description" content="One continuous cinematic film — no sections, no cuts. Scroll-driven 3D beauty journey, 60fps, real packaging." />
+<link rel="icon" href="data:," />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/film/herbal-glow-wash.webp" as="image" type="image/webp" />
+<link rel="stylesheet" href="styles.css" />
+<script src="script.js" defer></script>
+</head>
+<body>
+<div id="loader">
+  <div class="loader-bg"></div>
+  <div class="loader-content">
+    <div class="loader-logo">AfriEssence</div>
+    <div class="loader-tagline">WHERE BEAUTY MEETS RADIANCE</div>
+    <div class="loader-track"><div class="loader-bar"></div></div>
+  </div>
+</div>
+
+<nav class="nav" id="nav">
+  <a class="nav-logo" href="#">AfriEssence</a>
+  <div class="nav-progress"><div class="nav-progress-bar" id="navProgress"></div></div>
+  <button class="nav-cta" id="navCta">Shop</button>
+</nav>
+
+<main class="film" id="film" aria-label="AfriEssence continuous cinematic film">
+  <div class="stage" id="stage">
+    <canvas id="particles"></canvas>
+    <div class="mist"></div>
+    <div class="vignette"></div>
+    <div class="grain"></div>
+
+    <!-- Continuous Background - morphs, no cuts -->
+    <div class="bg-stack" id="bgStack">
+      <div class="bg-layer is-active" data-bg="0" style="background: radial-gradient(120% 120% at 50% 18%, #fdf1e1 0%, #e8c7a3 42%, #d4a07a 78%, #0f0b09 100%);"></div>
+      <div class="bg-layer" data-bg="1"><img src="assets/film/bathroom-env.webp" alt="" loading="lazy" decoding="async" /></div>
+      <div class="bg-layer" data-bg="2"><img src="assets/film/botanical-env.webp" alt="" loading="lazy" decoding="async" /></div>
+      <div class="bg-layer" data-bg="3"><img src="assets/film/dark-luxury-env.webp" alt="" loading="lazy" decoding="async" /></div>
+      <div class="bg-layer" data-bg="4"><img src="assets/film/golden-env.webp" alt="" loading="lazy" decoding="async" /></div>
+      <div class="bg-layer" data-bg="5"><img src="assets/film/collection-env.webp" alt="" loading="lazy" decoding="async" /></div>
+      <div class="bg-layer" data-bg="6" style="background: radial-gradient(140% 140% at 50% 40%, #fdf1e1 0%, #f7e6c8 30%, #e8c7a3 60%, #d4a07a 100%);"></div>
+    </div>
+
+    <!-- Continuous Product World - all products in same space, blended -->
+    <div class="world" id="world">
+      <!-- Hero Logo - fades into products -->
+      <div class="layer hero-layer is-active" data-layer="0">
+        <h1 class="hero-title">AfriEssence</h1>
+        <p class="hero-tagline">WHERE BEAUTY MEETS RADIANCE</p>
+        <p class="hero-sub">One film. No sections. No cuts. Just radiance, blended.</p>
+      </div>
+
+      <!-- Herbal Glow Wash - emerges from mist -->
+      <div class="layer product-layer" data-layer="1">
+        <div class="product-wrap" data-depth="0.8">
+          <picture><source srcset="assets/film/herbal-glow-wash.webp" type="image/webp" /><img src="assets/film/herbal-glow-wash.png" alt="Herbal Glow Wash authentic" class="product" loading="lazy" decoding="async" /></picture>
+          <div class="product-halo"></div>
+        </div>
+        <div class="text-wrap">
+          <span class="kicker">Herbal Glow Wash — Neem • Moringa • Baobab</span>
+          <h2>Cleanse, slow</h2>
+          <p>Stone, water, soft sunlight. Real brown bottle, black pump, burgundy label — exactly as photographed.</p>
+        </div>
+      </div>
+
+      <!-- Baovera - camera drifts sideways -->
+      <div class="layer product-layer" data-layer="2">
+        <div class="product-wrap" data-depth="1.0">
+          <picture><source srcset="assets/film/baovera-hair-oil.webp" type="image/webp" /><img src="assets/film/baovera-hair-oil.png" alt="Baovera Therapy Hair Oil authentic" class="product" loading="lazy" decoding="async" /></picture>
+          <div class="product-halo green"></div>
+        </div>
+        <div class="text-wrap">
+          <span class="kicker">Baovera Therapy — Baobab + Aloe Vera</span>
+          <h2>Nourish, deep</h2>
+          <p>50ml & 100ml authentic, cold-pressed, women cooperatives. Scalp therapy, real green label.</p>
+        </div>
+      </div>
+
+      <!-- Clear Aura - dark luxury -->
+      <div class="layer product-layer" data-layer="3">
+        <div class="product-wrap" data-depth="0.9">
+          <picture><source srcset="assets/film/clear-aura.webp" type="image/webp" /><img src="assets/film/clear-aura.png" alt="Clear Aura authentic" class="product small" loading="lazy" decoding="async" /></picture>
+          <div class="product-halo dark"></div>
+        </div>
+        <div class="text-wrap light">
+          <span class="kicker">Clear Aura — Black Soap + Honey + Neem</span>
+          <h2>Clarify, calm</h2>
+          <p>White label gold rose line, macro glass reflections, slow rotation. No redesign.</p>
+        </div>
+      </div>
+
+      <!-- Lush Wood - golden hour -->
+      <div class="layer product-layer" data-layer="4">
+        <div class="product-wrap" data-depth="1.1">
+          <picture><source srcset="assets/film/lush-wood.webp" type="image/webp" /><img src="assets/film/lush-wood.png" alt="Lush Wood Body Oil authentic" class="product" loading="lazy" decoding="async" /></picture>
+          <div class="product-halo gold"></div>
+        </div>
+        <div class="text-wrap">
+          <span class="kicker">Lush Wood — Shea + Baobab + Vanilla</span>
+          <h2>Seal, glow</h2>
+          <p>Dark label pink script, golden shimmer oil, warm woody notes. Seal step, skin-like finish.</p>
+        </div>
+      </div>
+
+      <!-- Collection - all together, monumental -->
+      <div class="layer collection-layer" data-layer="5">
+        <div class="collection-wrap" id="collectionWrap">
+          <div class="col-item" data-depth="0.3"><picture><source srcset="assets/film/herbal-glow-wash.webp" type="image/webp" /><img src="assets/film/herbal-glow-wash.png" alt="" loading="lazy" decoding="async" /></picture></div>
+          <div class="col-item" data-depth="0.6"><picture><source srcset="assets/film/lush-wood.webp" type="image/webp" /><img src="assets/film/lush-wood.png" alt="" loading="lazy" decoding="async" /></picture></div>
+          <div class="col-item" data-depth="0.9"><picture><source srcset="assets/film/baovera-hair-oil.webp" type="image/webp" /><img src="assets/film/baovera-hair-oil.png" alt="" loading="lazy" decoding="async" /></picture></div>
+          <div class="col-item" data-depth="0.4"><picture><source srcset="assets/film/clear-aura.webp" type="image/webp" /><img src="assets/film/clear-aura.png" alt="" loading="lazy" decoding="async" /></picture></div>
+          <div class="col-item" data-depth="0.7"><picture><source srcset="assets/film/curls-mist.webp" type="image/webp" /><img src="assets/film/curls-mist.png" alt="" loading="lazy" decoding="async" /></picture></div>
+        </div>
+        <div class="text-wrap center">
+          <span class="kicker">The Complete Ritual — 7 Essentials</span>
+          <h2>One world, seven glows</h2>
+          <p>Herbal Glow Wash • Lush Wood • Baovera • Clear Aura • Curls & Locs Mist • Handcrafted Bar Soap • Healing + Glow Butter — blended in monumental light.</p>
+        </div>
+      </div>
+
+      <!-- Outro - dissolves back to atmosphere -->
+      <div class="layer outro-layer" data-layer="6">
+        <h2 class="hero-title large">AfriEssence</h2>
+        <p class="hero-tagline large">WHERE BEAUTY MEETS RADIANCE</p>
+        <div class="outro-actions">
+          <button class="btn primary" id="shopBtn">Shop The Collection</button>
+          <button class="btn ghost" id="replayBtn">Replay</button>
+        </div>
+        <p class="credit">One continuous film • No sections • No cuts • 60fps • Real packaging • Lagos, Nigeria</p>
+      </div>
+    </div>
+
+    <!-- Progress - blended timeline -->
+    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="time" id="time">00:00 / 00:30</div>
+  </div>
+</main>
+</body>
+</html>
