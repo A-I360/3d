@@ -11,6 +11,7 @@ import "@fontsource/jost/500.css";
 
 import { SiteProvider } from "@/lib/site";
 import { CartProvider } from "@/lib/cart";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import Preloader from "@/components/Preloader";
 import CustomCursor from "@/components/CustomCursor";
 import Navbar from "@/components/Navbar";
@@ -52,21 +53,23 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <SiteProvider>
-          <CartProvider>
-            <MotionConfig reducedMotion="user">
-              <Preloader />
-              <CustomCursor />
-              <Navbar />
-              <SocialDock />
-              {children}
-              <Footer />
-              <CartDrawer />
-              <SearchOverlay />
-              <Toast />
-            </MotionConfig>
-          </CartProvider>
-        </SiteProvider>
+        <ErrorBoundary>
+          <SiteProvider>
+            <CartProvider>
+              <MotionConfig reducedMotion="user">
+                <Preloader />
+                <CustomCursor />
+                <Navbar />
+                <SocialDock />
+                {children}
+                <Footer />
+                <CartDrawer />
+                <SearchOverlay />
+                <Toast />
+              </MotionConfig>
+            </CartProvider>
+          </SiteProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

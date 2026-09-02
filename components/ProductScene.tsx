@@ -2,10 +2,26 @@
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { ContactShadows, Float, Sparkles } from "@react-three/drei";
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Component, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import * as THREE from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import type { ProductModelType } from "@/lib/products";
+
+/* If WebGL fails (blocked contexts, weak GPUs) render nothing — the static
+   product visual underneath the canvas remains visible. */
+class SafeCanvas extends Component<
+  { children: ReactNode; fallback?: ReactNode },
+  { failed: boolean }
+> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  render() {
+    if (this.state.failed) return this.props.fallback ?? null;
+    return this.props.children;
+  }
+}
 
 /* ---------- soft studio environment (no network assets) ---------- */
 function StudioEnv() {
@@ -340,18 +356,19 @@ export default function ProductScene({
 
   return (
     <div ref={wrapRef} className={className}>
-      <Canvas
-        frameloop={onScreen ? "always" : "never"}
-        camera={{ position: [0, 0.35, cameraZ], fov: 36 }}
-        dpr={lowPower ? [1, 1.15] : [1, dprMax]}
-        gl={{
-          antialias: !lowPower,
-          alpha: true,
-          powerPreference: lowPower ? "default" : "high-performance"
-        }}
-        onCreated={onReady}
-        style={{ background: "transparent" }}
-      >
+      <SafeCanvas>
+        <Canvas
+          frameloop={onScreen ? "always" : "never"}
+          camera={{ position: [0, 0.35, cameraZ], fov: 36 }}
+          dpr={lowPower ? [1, 1.15] : [1, dprMax]}
+          gl={{
+            antialias: !lowPower,
+            alpha: true,
+            powerPreference: lowPower ? "default" : "high-performance"
+          }}
+          onCreated={onReady}
+          style={{ background: "transparent" }}
+        >
         <Suspense fallback={null}>
           <StudioEnv />
           <ambientLight intensity={0.45} />
@@ -400,7 +417,8 @@ export default function ProductScene({
             />
           )}
         </Suspense>
-      </Canvas>
+        </Canvas>
+      </SafeCanvas>
     </div>
   );
 }

@@ -25,6 +25,8 @@ export default function CustomCursor() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!fine || reduced) return;
     setEnabled(true);
+    /* only hide the system cursor once this component is confirmed alive */
+    document.documentElement.classList.add("af-cursor");
 
     const move = (e: MouseEvent) => {
       mx.set(e.clientX);
@@ -48,6 +50,7 @@ export default function CustomCursor() {
     window.addEventListener("mousemove", move, { passive: true });
     document.documentElement.addEventListener("mouseleave", leave);
     return () => {
+      document.documentElement.classList.remove("af-cursor");
       window.removeEventListener("mousemove", move);
       document.documentElement.removeEventListener("mouseleave", leave);
     };

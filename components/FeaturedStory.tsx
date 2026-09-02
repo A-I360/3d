@@ -63,6 +63,11 @@ export default function FeaturedStory() {
   const bg1 = useTransform(scrollYProgress, [0.5, 0.55], [0, 1]);
   const rotY = useTransform(scrollYProgress, [0, 1], [-22, 22]);
   const sceneScale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.92, 0.94]);
+  /* chapter panel opacities — computed once (hooks must not live inside map) */
+  const opacities = [
+    useTransform(scrollYProgress, [0, 0.04, 0.4, 0.5], [0, 1, 1, 0]),
+    useTransform(scrollYProgress, [0.5, 0.54, 0.9, 1], [0, 1, 1, 0])
+  ];
 
   useEffect(() => setReady(false), [chapter]);
 
@@ -137,13 +142,10 @@ export default function FeaturedStory() {
 
         {/* chapter panels */}
         {CHAPTERS.map((ch, i) => {
-          const start = i === 0 ? 0 : 0.5;
-          const end = i === 0 ? 0.5 : 1;
-          const opacity = useTransform(scrollYProgress, [start, start + 0.04, end - 0.1, end], [0, 1, 1, 0]);
           return (
             <motion.div
               key={ch.product.slug}
-              style={{ opacity }}
+              style={{ opacity: opacities[i] }}
               className="absolute inset-0 z-20 flex items-center"
             >
               <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/5 to-transparent" />
