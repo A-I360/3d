@@ -1,27 +1,30 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 
 export default function FinalCta() {
   return (
     <section className="relative overflow-hidden bg-noir py-32 text-center text-ivory lg:py-44">
-      {/* animated light */}
-      <motion.div
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[70vmin] w-[70vmin] -translate-x-1/2 -translate-y-1/2 rounded-full"
-        animate={{ opacity: [0.1, 0.22, 0.1], scale: [1, 1.15, 1] }}
-        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
-        style={{ background: "radial-gradient(circle, rgba(201,174,126,0.55), transparent 60%)" }}
+      {/* animated light — CSS keyframes */}
+      <div
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[70vmin] w-[70vmin] -translate-x-1/2 -translate-y-1/2 animate-glow rounded-full"
+        style={{
+          animationDuration: "9s",
+          background: "radial-gradient(circle, rgba(201,174,126,0.55), transparent 60%)"
+        }}
       />
-      {/* drifting particles */}
+      {/* drifting particles — pure CSS, compositor-driven */}
       {Array.from({ length: 14 }).map((_, i) => (
-        <motion.span
+        <span
           key={i}
-          className="absolute h-1 w-1 rounded-full bg-champagne/50"
-          style={{ left: `${(i * 37) % 100}%`, top: `${(i * 53) % 100}%` }}
-          animate={{ y: [0, -60, 0], opacity: [0, 0.9, 0] }}
-          transition={{ duration: 6 + (i % 5), repeat: Infinity, delay: i * 0.7, ease: "easeInOut" }}
+          className="absolute h-1 w-1 animate-particle rounded-full bg-champagne/50"
+          style={{
+            left: `${(i * 37) % 100}%`,
+            top: `${(i * 53) % 100}%`,
+            animationDuration: `${6 + (i % 5)}s`,
+            animationDelay: `${i * 0.7}s`
+          }}
         />
       ))}
 

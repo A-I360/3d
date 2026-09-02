@@ -106,7 +106,14 @@ with transparency — replace `public/icon.svg` and update nothing else.
 - **Viewport gating** — below-the-fold canvases are mounted only as you scroll
   toward them; canvases pause (`frameloop: "never"`) when off-screen.
 - **Zero-re-render pointer parallax** — mouse tracking runs entirely on motion
-  value springs; the hero never re-renders React on mousemove.
+  value springs; the hero, product cards and social buttons never re-render
+  React on mousemove.
+- **Compositor-driven ambient motion** — all infinite loops (glow, particles,
+  floaters, marquee, scroll cue) are CSS keyframe animations on the compositor
+  instead of JavaScript rAF loops; nothing animates off-screen.
+- **True in-world 3D orbit** — the scroll-story product rotates in 3D space via
+  a scroll-linked value (no DOM canvas rasterization per frame); its contact
+  shadow renders once.
 - **GPU-composited motion** — crossfades use opacity/transform only; no blur
   filters animated over canvases or large layers.
 - **Optimized imagery** — all product visuals are WebP (~30–80 kB each, 28×

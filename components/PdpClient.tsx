@@ -111,6 +111,7 @@ export default function PdpClient({ product }: { product: Product }) {
                       autoRotate={autoRotate}
                       interactive
                       lowPower={lowPower}
+                      dprMax={1.75}
                       cameraZ={4.6}
                       onReady={() => setReady(true)}
                     />

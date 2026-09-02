@@ -79,17 +79,14 @@ function Bottle() {
         <cylinderGeometry args={[0.56, 0.66, 1.5, 48]} />
         <meshPhysicalMaterial {...amberGlass} />
       </mesh>
-      {/* rounded shoulder */}
       <mesh position={[0, 0.86, 0]} scale={[1.02, 0.34, 1.02]}>
         <sphereGeometry args={[0.56, 48, 32]} />
         <meshPhysicalMaterial {...amberGlass} />
       </mesh>
-      {/* wooden cap */}
       <mesh position={[0, 1.42, 0]}>
         <cylinderGeometry args={[0.4, 0.4, 0.34, 40]} />
         <meshPhysicalMaterial {...wood} />
       </mesh>
-      {/* embossed collar */}
       <mesh position={[0, 1.02, 0]}>
         <cylinderGeometry args={[0.46, 0.46, 0.14, 40]} />
         <meshPhysicalMaterial {...gold} />
@@ -109,7 +106,6 @@ function Pump() {
         <cylinderGeometry args={[0.3, 0.3, 0.5, 40]} />
         <meshPhysicalMaterial {...paleGlass} />
       </mesh>
-      {/* pump head */}
       <mesh position={[0, 1.32, 0]}>
         <cylinderGeometry args={[0.18, 0.18, 0.3, 32]} />
         <meshPhysicalMaterial {...gold} />
@@ -118,7 +114,6 @@ function Pump() {
         <cylinderGeometry args={[0.1, 0.1, 0.42, 16]} />
         <meshPhysicalMaterial {...gold} />
       </mesh>
-      {/* nozzle */}
       <mesh position={[0.26, 1.38, 0]}>
         <boxGeometry args={[0.36, 0.12, 0.12]} />
         <meshPhysicalMaterial {...gold} />
@@ -142,7 +137,6 @@ function Dropper() {
         <cylinderGeometry args={[0.26, 0.26, 0.4, 32]} />
         <meshPhysicalMaterial {...wood} />
       </mesh>
-      {/* dropper tip */}
       <mesh position={[0, 0.62, 0]}>
         <cylinderGeometry args={[0.09, 0.09, 0.5, 16]} />
         <meshPhysicalMaterial {...amberGlass} />
@@ -162,12 +156,10 @@ function Jar() {
         <cylinderGeometry args={[0.78, 0.72, 1.1, 48]} />
         <meshPhysicalMaterial {...cream} />
       </mesh>
-      {/* gold lid slightly ajar */}
       <mesh position={[0.06, 0.68, 0]} rotation={[0.08, 0, -0.06]}>
         <cylinderGeometry args={[0.5, 0.5, 0.24, 48]} />
         <meshPhysicalMaterial {...gold} />
       </mesh>
-      {/* whipped cream swirl on top */}
       <mesh position={[0, 0.48, 0]} scale={[1, 0.22, 1]}>
         <sphereGeometry args={[0.72, 40, 24]} />
         <meshPhysicalMaterial color="#faf5ec" roughness={0.6} />
@@ -233,7 +225,6 @@ function Bar() {
         <boxGeometry args={[1.15, 0.42, 0.72]} />
         <meshPhysicalMaterial {...noir} />
       </mesh>
-      {/* bevel highlight */}
       <mesh position={[0, 0.32, 0]} rotation={[0.06, 0.4, 0]}>
         <boxGeometry args={[1.05, 0.02, 0.62]} />
         <meshPhysicalMaterial {...gold} />
@@ -274,19 +265,28 @@ function Parallax({
   return <group ref={ref}>{children}</group>;
 }
 
-/* ---------- idle rotation ---------- */
+/* ---------- rotation: idle spin and/or scroll-driven 3D orbit ---------- */
 function Spin({
   children,
+  active,
   speed = 0.25,
-  active
+  target
 }: {
   children: React.ReactNode;
+  active?: boolean;
   speed?: number;
-  active: boolean;
+  /** scroll-linked rotation target (true in-world 3D orbit) */
+  target?: () => number;
 }) {
   const ref = useRef<THREE.Group>(null);
   useFrame((_, delta) => {
-    if (ref.current && active) ref.current.rotation.y += delta * speed;
+    const g = ref.current;
+    if (!g) return;
+    if (target) {
+      g.rotation.y = THREE.MathUtils.lerp(g.rotation.y, target(), Math.min(1, delta * 3));
+    } else if (active) {
+      g.rotation.y += delta * speed;
+    }
   });
   return <group ref={ref}>{children}</group>;
 }
@@ -299,6 +299,9 @@ export default function ProductScene({
   interactive = true,
   float = true,
   lowPower = false,
+  staticShadow = false,
+  dprMax = 1.5,
+  getRotate,
   className,
   cameraZ = 4.4,
   onReady
@@ -309,12 +312,17 @@ export default function ProductScene({
   interactive?: boolean;
   float?: boolean;
   lowPower?: boolean;
+  /** render the contact shadow once (static scene) instead of every frame */
+  staticShadow?: boolean;
+  dprMax?: number;
+  getRotate?: () => number;
   className?: string;
   cameraZ?: number;
   onReady?: () => void;
 }) {
   const Model = MODELS[model];
   const parallaxIntensity = useMemo(() => (interactive ? 1 : 0.35), [interactive]);
+  const useFloat = float && !lowPower;
 
   /* pause rendering entirely when the canvas scrolls off-screen */
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -335,9 +343,9 @@ export default function ProductScene({
       <Canvas
         frameloop={onScreen ? "always" : "never"}
         camera={{ position: [0, 0.35, cameraZ], fov: 36 }}
-        dpr={lowPower ? [1, 1.15] : [1, 1.75]}
+        dpr={lowPower ? [1, 1.15] : [1, dprMax]}
         gl={{
-          antialias: true,
+          antialias: !lowPower,
           alpha: true,
           powerPreference: lowPower ? "default" : "high-performance"
         }}
@@ -352,16 +360,22 @@ export default function ProductScene({
           <pointLight position={[-3, -1, 3]} intensity={0.35} color="#f0d9b0" />
 
           <Parallax intensity={parallaxIntensity}>
-            <Spin active={autoRotate || interactive} speed={autoRotate ? 0.5 : 0.18}>
-              <Float
-                speed={float ? 1.3 : 0}
-                rotationIntensity={float ? 0.18 : 0}
-                floatIntensity={float ? 0.5 : 0}
-              >
+            <Spin
+              active={autoRotate || (interactive && !getRotate)}
+              speed={autoRotate ? 0.5 : 0.12}
+              target={getRotate}
+            >
+              {useFloat ? (
+                <Float speed={1.2} rotationIntensity={0.12} floatIntensity={0.35}>
+                  <group position={[0, -0.15, 0]} scale={1.05}>
+                    <Model />
+                  </group>
+                </Float>
+              ) : (
                 <group position={[0, -0.15, 0]} scale={1.05}>
                   <Model />
                 </group>
-              </Float>
+              )}
             </Spin>
             <ContactShadows
               position={[0, -1.35, 0]}
@@ -369,17 +383,19 @@ export default function ProductScene({
               scale={11}
               blur={2.6}
               far={3.2}
+              resolution={lowPower ? 128 : 256}
+              frames={staticShadow ? 1 : Infinity}
               color="#241812"
             />
           </Parallax>
 
           {sparkles && (
             <Sparkles
-              count={lowPower ? 24 : 70}
+              count={lowPower ? 16 : 48}
               scale={[9, 5.5, 9]}
-              size={lowPower ? 1.5 : 2.4}
+              size={lowPower ? 1.4 : 2.2}
               speed={0.25}
-              opacity={0.55}
+              opacity={0.45}
               color="#d9b98c"
             />
           )}

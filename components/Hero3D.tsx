@@ -69,9 +69,9 @@ export default function Hero3D() {
         />
       </motion.div>
 
-      {/* lighting reacts to cursor — transform-only, no re-render */}
+      {/* lighting reacts to cursor — transform-only, no blend layer, no re-render */}
       <motion.div
-        className="pointer-events-none absolute left-0 top-0 z-10 h-[900px] w-[900px] mix-blend-screen"
+        className="pointer-events-none absolute left-0 top-0 z-10 h-[900px] w-[900px]"
         style={{
           x: lightX,
           y: lightY,
@@ -118,6 +118,7 @@ export default function Hero3D() {
             sparkles={hero.slug === "shimmer-oil" && !lowPower}
             interactive
             lowPower={lowPower}
+            dprMax={1.35}
             cameraZ={4.6}
             onReady={() => setReady(true)}
           />
@@ -205,11 +206,7 @@ export default function Hero3D() {
       >
         <div className="flex flex-col items-center gap-3">
           <span className="text-[9px] uppercase tracking-[0.4em] text-cocoa/70">Scroll</span>
-          <motion.span
-            className="block h-10 w-px bg-gradient-to-b from-espresso/60 to-transparent"
-            animate={{ scaleY: [0.3, 1, 0.3], opacity: [0.4, 1, 0.4] }}
-            transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-          />
+          <span className="block h-10 w-px animate-cue bg-gradient-to-b from-espresso/60 to-transparent" />
         </div>
       </motion.a>
 

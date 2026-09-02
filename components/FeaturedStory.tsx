@@ -95,12 +95,9 @@ export default function FeaturedStory() {
           ))}
         </div>
 
-        {/* rotating product */}
+        {/* rotating product — the model itself orbits in 3D (see getRotate) */}
         <div className="absolute left-1/2 top-1/2 z-10 h-[78vmin] w-[78vmin] -translate-x-1/2 -translate-y-1/2 sm:h-[62vmin] sm:w-[62vmin]">
-          <motion.div
-            className="absolute inset-0"
-            style={{ rotateY: rotY, scale: sceneScale }}
-          >
+          <motion.div className="absolute inset-0" style={{ scale: sceneScale }}>
             {/* instant static fallback per chapter */}
             <motion.div
               key={`img-${c.product.slug}`}
@@ -128,6 +125,8 @@ export default function FeaturedStory() {
                   model={c.product.model}
                   sparkles={c.product.slug === "shimmer-oil"}
                   interactive={false}
+                  staticShadow
+                  getRotate={() => rotY.get()}
                   cameraZ={4.8}
                   onReady={() => setReady(true)}
                 />

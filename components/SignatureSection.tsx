@@ -18,12 +18,11 @@ export default function SignatureSection() {
 
   return (
     <section className="relative overflow-hidden bg-noir py-28 text-ivory lg:py-40">
-      {/* animated light */}
-      <motion.div
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[80vmin] w-[80vmin] -translate-x-1/2 -translate-y-1/2 rounded-full"
-        animate={{ opacity: [0.12, 0.2, 0.12], scale: [1, 1.12, 1] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+      {/* animated light — CSS keyframes, compositor-driven */}
+      <div
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[80vmin] w-[80vmin] -translate-x-1/2 -translate-y-1/2 animate-glow rounded-full"
         style={{
+          animationDuration: "8s",
           background: "radial-gradient(circle, rgba(201,174,126,0.5), transparent 62%)"
         }}
       />
@@ -56,10 +55,9 @@ export default function SignatureSection() {
                 className="relative h-full w-full"
               >
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <motion.div
-                    className="relative h-[70%] w-auto"
-                    animate={{ y: [0, -12, 0] }}
-                    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                  <div
+                    className="relative h-[70%] w-auto animate-floaty"
+                    style={{ animationDuration: "6s" }}
                   >
                     <Image
                       src={p.image}
@@ -69,7 +67,7 @@ export default function SignatureSection() {
                       className="h-full w-auto object-contain drop-shadow-[0_50px_60px_rgba(0,0,0,0.55)]"
                       priority
                     />
-                  </motion.div>
+                  </div>
                 </div>
                 {/* orbiting label */}
                 <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-center">
