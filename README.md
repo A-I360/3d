@@ -117,6 +117,22 @@ with transparency — replace `public/icon.svg` and update nothing else.
   `MotionConfig reducedMotion="user"`; the preloader runs once per session
   (1.5 s, skipped on revisits); unused deps removed.
 
+## 🔗 Connect
+
+Every platform has its own interactive **3D tilt button** (layered pedestal +
+floating icon plate + handle pill that slides out on hover) — available as a
+floating dock on the right edge (desktop) and bottom-right (mobile), plus in
+the footer.
+
+| Platform | Handle | Link |
+|---|---|---|
+| Instagram | `@afri.essence__` | https://www.instagram.com/afri.essence__ |
+| WhatsApp | `0816 290 3238` | https://wa.me/2348162903238 |
+| TikTok | `@afriessenceholistics` | https://www.tiktok.com/@afriessenceholistics |
+
+Phone / WhatsApp: **+234 816 290 3238** — defined once in
+`components/Social3D.tsx` (`SOCIAL_LINKS`), rendered everywhere automatically.
+
 ## 📍 Local craft
 
 All products are positioned as handcrafted in Lagos, Nigeria, with Naira

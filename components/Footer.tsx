@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import SocialButton3D, { PhoneIcon, SOCIAL_LINKS } from "@/components/Social3D";
 
 const SHOP_LINKS = ["Lush Wood Body Oil", "Herbal Glow Body Wash", "Baovera Hair Oil", "Body Butter", "Perfume Oil", "Shimmer Oil", "Black Luxe Soap"];
 
@@ -81,25 +82,19 @@ export default function Footer() {
               beauty traditions — created to nourish, elevate and reveal your
               natural radiance.
             </p>
-            <div className="mt-8 flex items-center gap-6">
-              {[
-                { label: "Instagram", icon: "M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm5 6a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm0 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm5.5-3.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z" },
-                { label: "TikTok", icon: "M16 3c.3 2.2 1.8 3.9 4 4.2v3c-1.6 0-3-.5-4-1.3v6.4a6.2 6.2 0 1 1-6.2-6.2c.35 0 .7.03 1 .1v3.1a3.1 3.1 0 1 0 2.2 3V3h3Z" },
-                { label: "Facebook", icon: "M13.5 21v-8h2.7l.4-3.2h-3.1V7.7c0-.9.3-1.6 1.7-1.6h1.5V3.2c-.3 0-1.2-.1-2.2-.1-2.2 0-3.8 1.4-3.8 3.9v2.8H8v3.2h2.7v8h2.8Z" }
-              ].map((s) => (
-                <a
-                  key={s.label}
-                  href="#contact"
-                  aria-label={s.label}
-                  data-cursor="SHOP"
-                  className="text-ivory/50 transition-colors duration-300 hover:text-champagne"
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d={s.icon} />
-                  </svg>
-                </a>
+            <div className="mt-8 flex items-center gap-3">
+              {SOCIAL_LINKS.map((s) => (
+                <SocialButton3D key={s.id} item={s} size="compact" />
               ))}
             </div>
+            <a
+              href="tel:+2348162903238"
+              data-cursor="CALL"
+              className="mt-6 inline-flex items-center gap-2.5 text-sm font-light text-ivory/55 transition-colors duration-300 hover:text-champagne"
+            >
+              <PhoneIcon className="h-4 w-4 text-champagne" />
+              Call · WhatsApp&nbsp;0816 290 3238
+            </a>
           </div>
 
           <div>

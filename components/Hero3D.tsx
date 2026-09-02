@@ -214,9 +214,9 @@ export default function Hero3D() {
       </motion.a>
 
       {/* side labels */}
-      <div className="absolute right-6 top-1/2 z-40 hidden -translate-y-1/2 rotate-90 items-center gap-6 lg:flex">
+      <div className="absolute bottom-10 right-7 z-40 hidden items-center gap-4 lg:flex">
+        <span className="h-px w-10 bg-cocoa/30" />
         <span className="text-[9px] uppercase tracking-[0.45em] text-cocoa/50">Est. Lagos</span>
-        <span className="h-px w-14 bg-cocoa/30" />
       </div>
       <div className="absolute left-6 top-1/2 z-40 hidden -translate-y-1/2 -rotate-90 items-center gap-6 lg:flex">
         <span className="h-px w-14 bg-cocoa/30" />

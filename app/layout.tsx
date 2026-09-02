@@ -14,6 +14,7 @@ import { CartProvider } from "@/lib/cart";
 import Preloader from "@/components/Preloader";
 import CustomCursor from "@/components/CustomCursor";
 import Navbar from "@/components/Navbar";
+import SocialDock from "@/components/SocialDock";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
 import SearchOverlay from "@/components/SearchOverlay";
@@ -57,6 +58,7 @@ export default function RootLayout({
               <Preloader />
               <CustomCursor />
               <Navbar />
+              <SocialDock />
               {children}
               <Footer />
               <CartDrawer />
