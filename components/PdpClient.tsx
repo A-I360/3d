@@ -4,25 +4,36 @@ import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import ProductScene from "@/components/ProductScene";
+import { useEffect, useState } from "react";
+import Scene from "@/components/Scene";
 import ProductCard from "@/components/ProductCard";
 import Reveal from "@/components/Reveal";
 import { useCart } from "@/lib/cart";
 import { formatNGN, PRODUCTS, type Product } from "@/lib/products";
+import { useLowPower } from "@/lib/useLowPower";
 import { cn } from "@/lib/cn";
 
 const SECTIONS = ["BENEFITS", "INGREDIENTS", "HOW TO USE", "DETAILS"] as const;
 type Section = (typeof SECTIONS)[number];
+
+const fadeMask = {
+  WebkitMaskImage:
+    "radial-gradient(115% 115% at 50% 50%, #000 55%, transparent 78%)",
+  maskImage: "radial-gradient(115% 115% at 50% 50%, #000 55%, transparent 78%)"
+};
 
 export default function PdpClient({ product }: { product: Product }) {
   const [qty, setQty] = useState(1);
   const [openSection, setOpenSection] = useState<Section | null>("BENEFITS");
   const [autoRotate, setAutoRotate] = useState(true);
   const [env, setEnv] = useState<"ivory" | "noir">("ivory");
+  const [ready, setReady] = useState(false);
+  const lowPower = useLowPower();
   const { add } = useCart();
   const router = useRouter();
   const dark = !!product.theme.dark;
+
+  useEffect(() => setReady(false), [product.slug]);
 
   const related = PRODUCTS.filter((p) => p.slug !== product.slug)
     .sort((a, b) =>
@@ -71,16 +82,39 @@ export default function PdpClient({ product }: { product: Product }) {
                       : "radial-gradient(80% 60% at 50% 42%, #2A1D14, #17100B)"
                 }}
               >
-                <div className="aspect-[4/5]">
-                  <ProductScene
-                    model={product.model}
-                    sparkles={product.slug === "shimmer-oil"}
-                    autoRotate={autoRotate}
-                    interactive
-                    lowPower={false}
-                    cameraZ={4.6}
+                <div className="relative aspect-[4/5]">
+                  {/* instant static fallback */}
+                  <motion.div
                     className="absolute inset-0"
-                  />
+                    animate={{ opacity: ready ? 0 : 1 }}
+                    transition={{ duration: 0.7, ease: "easeOut" }}
+                  >
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      fill
+                      priority
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      className="object-cover"
+                      style={fadeMask}
+                    />
+                  </motion.div>
+
+                  {/* WebGL viewer */}
+                  <div
+                    className="absolute inset-0 transition-opacity duration-700"
+                    style={{ opacity: ready ? 1 : 0 }}
+                  >
+                    <Scene
+                      model={product.model}
+                      sparkles={product.slug === "shimmer-oil" && !lowPower}
+                      autoRotate={autoRotate}
+                      interactive
+                      lowPower={lowPower}
+                      cameraZ={4.6}
+                      onReady={() => setReady(true)}
+                    />
+                  </div>
                 </div>
 
                 {/* viewer controls */}

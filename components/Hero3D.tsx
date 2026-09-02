@@ -1,43 +1,47 @@
 "use client";
 
-import { AnimatePresence, motion, useMotionValue, useSpring } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useRef, useState } from "react";
-import ProductScene from "@/components/ProductScene";
+import { useEffect, useState } from "react";
+import Scene from "@/components/Scene";
 import { PRODUCTS } from "@/lib/products";
+import { useLowPower } from "@/lib/useLowPower";
 
 const HERO_PRODUCTS = PRODUCTS.filter((p) =>
   ["lush-wood-body-oil", "shimmer-oil", "perfume-oil"].includes(p.slug)
 );
 
+const fadeMask = {
+  WebkitMaskImage:
+    "radial-gradient(115% 115% at 50% 50%, #000 55%, transparent 78%)",
+  maskImage: "radial-gradient(115% 115% at 50% 50%, #000 55%, transparent 78%)"
+};
+
 export default function Hero3D() {
   const [active, setActive] = useState(0);
-  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+  const [ready, setReady] = useState(false);
+  const lowPower = useLowPower();
+
+  /* pointer values — springs avoid any React re-render while moving */
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
-  const bgX = useSpring(mx, { stiffness: 40, damping: 20 });
-  const bgY = useSpring(my, { stiffness: 40, damping: 20 });
+  const bgX = useSpring(mx, { stiffness: 38, damping: 22 });
+  const bgY = useSpring(my, { stiffness: 38, damping: 22 });
   const fgX = useSpring(mx, { stiffness: 60, damping: 20 });
   const fgY = useSpring(my, { stiffness: 60, damping: 20 });
+  const lightX = useSpring(mx, { stiffness: 120, damping: 24 });
+  const lightY = useSpring(my, { stiffness: 120, damping: 24 });
 
   const hero = HERO_PRODUCTS[active];
 
+  useEffect(() => setReady(false), [active]);
 
   const onMove = (e: React.MouseEvent<HTMLElement>) => {
     const r = e.currentTarget.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width - 0.5;
-    const y = (e.clientY - r.top) / r.height - 0.5;
-    mx.set(x * 26);
-    my.set(y * 26);
-    setMouse({ x: e.clientX, y: e.clientY });
+    mx.set(((e.clientX - r.left) / r.width - 0.5) * 26);
+    my.set(((e.clientY - r.top) / r.height - 0.5) * 26);
   };
-
-  const lightStyle = useMemo(
-    () => ({
-      background: `radial-gradient(600px circle at ${mouse.x}px ${mouse.y}px, rgba(216,185,138,0.14), transparent 65%)`
-    }),
-    [mouse]
-  );
 
   return (
     <section
@@ -50,10 +54,7 @@ export default function Hero3D() {
       }}
     >
       {/* ---- background layer (slow) ---- */}
-      <motion.div
-        className="absolute inset-0"
-        style={{ x: bgX, y: bgY, scale: 1.06 }}
-      >
+      <motion.div className="absolute inset-0" style={{ x: bgX, y: bgY, scale: 1.06 }}>
         <div className="absolute inset-0 bg-[radial-gradient(90%_70%_at_50%_30%,#FBF7F0_0%,#F3EBDD_55%,#E9DCC7_100%)]" />
         <div className="absolute -left-[15%] top-[8%] h-[46vmin] w-[46vmin] rounded-full bg-sand/40 blur-[90px]" />
         <div className="absolute -right-[12%] bottom-[6%] h-[42vmin] w-[42vmin] rounded-full bg-champagne/30 blur-[90px]" />
@@ -68,29 +69,60 @@ export default function Hero3D() {
         />
       </motion.div>
 
-      {/* lighting reacts to cursor */}
-      <motion.div className="pointer-events-none absolute inset-0 z-10 mix-blend-screen" style={lightStyle} />
+      {/* lighting reacts to cursor — transform-only, no re-render */}
+      <motion.div
+        className="pointer-events-none absolute left-0 top-0 z-10 h-[900px] w-[900px] mix-blend-screen"
+        style={{
+          x: lightX,
+          y: lightY,
+          translateX: "-50%",
+          translateY: "-50%",
+          background:
+            "radial-gradient(closest-side, rgba(216,185,138,0.16), transparent 70%)"
+        }}
+      />
 
       {/* ---- product layer (mid) ---- */}
-      <AnimatePresence mode="wait">
+      <div className="absolute inset-0 z-20">
+        {/* instant static fallback — masked so it melts into the backdrop */}
         <motion.div
-          key={hero.slug}
-          className="absolute inset-0 z-20"
-          initial={{ opacity: 0, scale: 0.94 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 1.04 }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          key={`img-${hero.slug}`}
+          className="absolute inset-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: ready ? 0 : 1 }}
+          transition={{ duration: 0.9, ease: "easeOut" }}
         >
-          <ProductScene
+          <div className="absolute left-1/2 top-1/2 h-[88vmin] w-[88vmin] -translate-x-1/2 -translate-y-1/2 animate-floaty sm:h-[72vmin] sm:w-[72vmin]">
+            <Image
+              src={hero.image}
+              alt={hero.name}
+              fill
+              priority
+              sizes="90vmin"
+              className="object-cover"
+              style={fadeMask}
+            />
+          </div>
+        </motion.div>
+
+        {/* WebGL product, faded in once compiled */}
+        <motion.div
+          key={`scene-${hero.slug}`}
+          className="absolute inset-0"
+          initial={{ opacity: 0, scale: 0.97 }}
+          animate={{ opacity: ready ? 1 : 0, scale: ready ? 1 : 0.98 }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <Scene
             model={hero.model}
-            sparkles={hero.slug === "shimmer-oil"}
+            sparkles={hero.slug === "shimmer-oil" && !lowPower}
             interactive
-            lowPower={false}
-            className="absolute inset-0"
+            lowPower={lowPower}
             cameraZ={4.6}
+            onReady={() => setReady(true)}
           />
         </motion.div>
-      </AnimatePresence>
+      </div>
 
       {/* ---- foreground layer (fast) + copy ---- */}
       <motion.div
@@ -100,7 +132,7 @@ export default function Hero3D() {
         <motion.p
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.9 }}
+          transition={{ delay: 0.35, duration: 0.9 }}
           className="mb-6 text-[10px] font-medium uppercase tracking-[0.5em] text-cocoa/90 sm:text-[11px]"
         >
           African Beauty&ensp;•&ensp;Modern Rituals
@@ -115,7 +147,7 @@ export default function Hero3D() {
         <motion.p
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.75, duration: 0.9 }}
+          transition={{ delay: 0.55, duration: 0.9 }}
           className="mt-7 max-w-xl text-sm font-light leading-relaxed text-cocoa/90 sm:text-base"
         >
           Thoughtfully crafted beauty rituals inspired by nature, created to
@@ -125,7 +157,7 @@ export default function Hero3D() {
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.95, duration: 0.9 }}
+          transition={{ delay: 0.7, duration: 0.9 }}
           className="pointer-events-auto mt-10 flex flex-col items-center gap-4 sm:flex-row sm:gap-6"
         >
           <Link
@@ -167,7 +199,7 @@ export default function Hero3D() {
         href="#collection"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.6 }}
+        transition={{ delay: 1.4 }}
         className="absolute bottom-8 left-1/2 z-40 -translate-x-1/2"
         aria-label="Scroll to collection"
       >

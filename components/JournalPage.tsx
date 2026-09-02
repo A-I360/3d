@@ -29,7 +29,7 @@ const ARTICLES = [
     read: "5 min",
     title: "Baobab: The Tree of Life, Now in Your Hair Care",
     dek: "For centuries, the baobab has nourished the continent. Here is what it can do for your strands.",
-    img: "/products/baovera-hair-oil.png",
+    img: "/products/baovera-hair-oil.webp",
     body: [
       "The baobab does not hurry. It grows for a thousand years, stores water in its vast trunk, and offers fruit so nourishing that the ancient trade routes called it the tree of life.",
       "Its seeds yield an oil of extraordinary character — light, fast-absorbing, rich in omega-3, 6 and 9 fatty acids. Where heavier oils sit on the strand, baobab sinks in, softening from within and sealing the cuticle against the day.",
@@ -45,7 +45,7 @@ const ARTICLES = [
     read: "4 min",
     title: "Scent as Memory: The Art of the Perfume Oil",
     dek: "Why concentrated oils — not sprays — are the most intimate way to wear fragrance.",
-    img: "/products/perfume-oil.png",
+    img: "/products/perfume-oil.webp",
     body: [
       "Scent is the only sense wired directly into memory. A fragrance is not worn; it is remembered into being — and the way you wear it changes the story it tells.",
       "A spray announces. It fills a room, then fades, leaving a trail of what it was. A perfume oil confides. Applied to the pulse points — wrists, neck, behind the ears — it warms against the skin and unfolds over hours, changing as your body heat changes.",

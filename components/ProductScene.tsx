@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { ContactShadows, Float, Sparkles } from "@react-three/drei";
-import { Suspense, useEffect, useMemo, useRef } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import type { ProductModelType } from "@/lib/products";
@@ -300,7 +300,8 @@ export default function ProductScene({
   float = true,
   lowPower = false,
   className,
-  cameraZ = 4.4
+  cameraZ = 4.4,
+  onReady
 }: {
   model: ProductModelType;
   sparkles?: boolean;
@@ -310,16 +311,37 @@ export default function ProductScene({
   lowPower?: boolean;
   className?: string;
   cameraZ?: number;
+  onReady?: () => void;
 }) {
   const Model = MODELS[model];
   const parallaxIntensity = useMemo(() => (interactive ? 1 : 0.35), [interactive]);
 
+  /* pause rendering entirely when the canvas scrolls off-screen */
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [onScreen, setOnScreen] = useState(true);
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      ([entry]) => setOnScreen(entry.isIntersecting),
+      { rootMargin: "160px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <div className={className}>
+    <div ref={wrapRef} className={className}>
       <Canvas
+        frameloop={onScreen ? "always" : "never"}
         camera={{ position: [0, 0.35, cameraZ], fov: 36 }}
-        dpr={lowPower ? [1, 1.2] : [1, 1.75]}
-        gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+        dpr={lowPower ? [1, 1.15] : [1, 1.75]}
+        gl={{
+          antialias: true,
+          alpha: true,
+          powerPreference: lowPower ? "default" : "high-performance"
+        }}
+        onCreated={onReady}
         style={{ background: "transparent" }}
       >
         <Suspense fallback={null}>

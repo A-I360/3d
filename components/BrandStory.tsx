@@ -31,7 +31,6 @@ export default function BrandStory() {
                 width={900}
                 height={1125}
                 className="h-full w-full scale-110 object-cover"
-                priority
               />
             </div>
             {/* layered frame */}
@@ -46,7 +45,7 @@ export default function BrandStory() {
           >
             <div className="overflow-hidden border border-ivory/60 bg-cream shadow-luxe">
               <Image
-                src="/products/body-butter.png"
+                src="/products/body-butter.webp"
                 alt="AfriEssence Body Butter"
                 width={400}
                 height={400}

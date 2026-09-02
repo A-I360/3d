@@ -26,7 +26,7 @@ export interface Product {
   size: string;
   blurb: string;
   description: string;
-  image: string; // /products/<slug>.png — swap your photo at this exact path
+  image: string; // /products/<slug>.webp — swap your photo at this exact path
   theme: ProductTheme;
   model: ProductModelType;
   benefits: string[];
@@ -50,7 +50,7 @@ export const PRODUCTS: Product[] = [
       "A luxurious body oil designed as part of an elevated body-care ritual — warm woods, soft amber and deep, lasting nourishment.",
     description:
       "Lush Wood Body Oil is the heart of the AfriEssence ritual. A slow, golden blend of cold-pressed oils and warm botanical woods that melts into the skin, leaving it soft, scented and quietly radiant. Designed to be massaged in with intention — morning or night — it turns an everyday moment into a ceremony of self-care.",
-    image: "/products/lush-wood-body-oil.png",
+    image: "/products/lush-wood-body-oil.webp",
     theme: { bg: "#EFE6D8", accent: "#8A6A4B" },
     model: "bottle",
     featured: true,
@@ -90,7 +90,7 @@ export const PRODUCTS: Product[] = [
       "A botanical-inspired cleansing ritual that refreshes the skin and leaves a soft, radiant veil of glow.",
     description:
       "Herbal Glow Body Wash turns cleansing into a morning ritual. A gentle, botanical-rich formula infused with green botanicals and cool water extracts that purifies without stripping, leaving skin refreshed, luminous and softly scented with fresh herbs.",
-    image: "/products/herbal-glow-body-wash.png",
+    image: "/products/herbal-glow-body-wash.webp",
     theme: { bg: "#E4E8D8", accent: "#5C7050" },
     model: "pump",
     featured: true,
@@ -129,7 +129,7 @@ export const PRODUCTS: Product[] = [
       "A nourishing hair-care ritual — baobab and botanical oils that restore softness, shine and strength.",
     description:
       "Baovera Hair Oil is a premium hair-care ritual in a single golden drop. Baobab seed oil — the ancient African 'tree of life' — meets aloe and warm botanicals to nourish the scalp, seal the hair shaft and restore a glossy, healthy radiance from root to tip.",
-    image: "/products/baovera-hair-oil.png",
+    image: "/products/baovera-hair-oil.webp",
     theme: { bg: "#F0E4D0", accent: "#7A5C34" },
     model: "dropper",
     signature: true,
@@ -168,7 +168,7 @@ export const PRODUCTS: Product[] = [
       "A rich, whipped body butter that leaves skin deeply moisturized, cared for and touchably soft.",
     description:
       "Body Butter is the embrace at the end of the ritual. A rich, whipped blend of shea and cocoa butters that melts on contact and sinks in deeply, leaving skin deeply moisturized, supple and cared for — a quiet luxury you can feel long after application.",
-    image: "/products/body-butter.png",
+    image: "/products/body-butter.webp",
     theme: { bg: "#F3ECDF", accent: "#B08968" },
     model: "jar",
     signature: true,
@@ -207,7 +207,7 @@ export const PRODUCTS: Product[] = [
       "A concentrated fragrance experience — an elegant personal scent ritual in a single drop.",
     description:
       "Perfume Oil is scent as ceremony. A concentrated, alcohol-free fragrance that unfolds slowly on the skin — warm amber, smoked woods and a whisper of floral — intimate, long-lasting and entirely yours. One drop at the pulse points becomes your signature.",
-    image: "/products/perfume-oil.png",
+    image: "/products/perfume-oil.webp",
     theme: { bg: "#241812", accent: "#C9AE7E", dark: true },
     model: "vial",
     signature: true,
@@ -246,7 +246,7 @@ export const PRODUCTS: Product[] = [
       "A luminous body oil that adds a subtle, radiant sheen — light, captured on skin.",
     description:
       "Shimmer Oil is radiance, bottled. A weightless veil of golden oil with finely milled reflective particles that catch the light and leave skin with a soft, sun-kissed luminosity. For shoulders, collarbones and the moments that deserve a little more glow.",
-    image: "/products/shimmer-oil.png",
+    image: "/products/shimmer-oil.webp",
     theme: { bg: "#F0E8D8", accent: "#C9A227" },
     model: "slim",
     benefits: [
@@ -284,7 +284,7 @@ export const PRODUCTS: Product[] = [
       "A sophisticated cleansing bar — the signature AfriEssence ritual of purity and polish.",
     description:
       "Black Luxe Soap is the signature of the collection. A deep, sophisticated cleansing bar born of the African black-soap tradition, refined into a modern luxury object. It clarifies, smooths and polishes the skin, leaving it clean, calm and beautifully balanced.",
-    image: "/products/black-luxe-soap.png",
+    image: "/products/black-luxe-soap.webp",
     theme: { bg: "#17100B", accent: "#C9C2B8", dark: true },
     model: "bar",
     benefits: [

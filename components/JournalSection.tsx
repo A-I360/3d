@@ -16,7 +16,7 @@ const POSTS = [
   },
   {
     id: "post-2",
-    img: "/products/baovera-hair-oil.png",
+    img: "/products/baovera-hair-oil.webp",
     tag: "Ingredients",
     title: "Baobab: The Tree of Life, Now in Your Hair Care",
     excerpt:
@@ -25,7 +25,7 @@ const POSTS = [
   },
   {
     id: "post-3",
-    img: "/products/perfume-oil.png",
+    img: "/products/perfume-oil.webp",
     tag: "Fragrance",
     title: "Scent as Memory: The Art of the Perfume Oil",
     excerpt:

@@ -5,10 +5,10 @@ import Image from "next/image";
 import Reveal from "@/components/Reveal";
 
 const FLOATING = [
-  { src: "/products/baovera-hair-oil.png", alt: "Baovera Hair Oil", pos: "left-[4%] top-[12%] w-36 lg:w-44", delay: 0 },
-  { src: "/products/body-butter.png", alt: "Body Butter", pos: "right-[5%] top-[20%] w-32 lg:w-40", delay: 1.2 },
-  { src: "/products/perfume-oil.png", alt: "Perfume Oil", pos: "left-[10%] bottom-[14%] w-28 lg:w-36", delay: 2.1 },
-  { src: "/products/lush-wood-body-oil.png", alt: "Lush Wood Body Oil", pos: "right-[9%] bottom-[18%] w-32 lg:w-44", delay: 0.6 }
+  { src: "/products/baovera-hair-oil.webp", alt: "Baovera Hair Oil", pos: "left-[4%] top-[12%] w-36 lg:w-44", delay: 0 },
+  { src: "/products/body-butter.webp", alt: "Body Butter", pos: "right-[5%] top-[20%] w-32 lg:w-40", delay: 1.2 },
+  { src: "/products/perfume-oil.webp", alt: "Perfume Oil", pos: "left-[10%] bottom-[14%] w-28 lg:w-36", delay: 2.1 },
+  { src: "/products/lush-wood-body-oil.webp", alt: "Lush Wood Body Oil", pos: "right-[9%] bottom-[18%] w-32 lg:w-44", delay: 0.6 }
 ];
 
 const INGREDIENTS = [

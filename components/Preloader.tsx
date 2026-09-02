@@ -6,15 +6,29 @@ import { useSite } from "@/lib/site";
 
 const WORD = "AFRIESSENCE".split("");
 
+const STORAGE_KEY = "afriessence-loaded";
+
 export default function Preloader() {
   const { loaded, setLoaded } = useSite();
   const [progress, setProgress] = useState(0);
   const raf = useRef<number | null>(null);
+  const [skip] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return sessionStorage.getItem(STORAGE_KEY) === "1";
+    } catch {
+      return false;
+    }
+  });
 
   useEffect(() => {
     if (loaded) return;
+    if (skip) {
+      setLoaded(true);
+      return;
+    }
     const start = performance.now();
-    const dur = 2100;
+    const dur = 1500;
     const tick = (now: number) => {
       const t = Math.min(1, (now - start) / dur);
       const eased = 1 - Math.pow(1 - t, 3);
@@ -22,7 +36,12 @@ export default function Preloader() {
       if (t < 1) {
         raf.current = requestAnimationFrame(tick);
       } else {
-        setTimeout(() => setLoaded(true), 350);
+        try {
+          sessionStorage.setItem(STORAGE_KEY, "1");
+        } catch {
+          /* ignore */
+        }
+        setTimeout(() => setLoaded(true), 200);
       }
     };
     raf.current = requestAnimationFrame(tick);
@@ -31,9 +50,9 @@ export default function Preloader() {
       if (raf.current) cancelAnimationFrame(raf.current);
       document.documentElement.style.overflow = "";
     };
-  }, [loaded, setLoaded]);
+  }, [loaded, setLoaded, skip]);
 
-  if (loaded) return null;
+  if (skip || loaded) return null;
 
   return (
     <motion.div

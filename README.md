@@ -49,7 +49,7 @@ public/logo.svg       # full logo reference
 Everything is data-driven from **`lib/products.ts`** — no component changes needed.
 
 1. Add an object to the `PRODUCTS` array with a unique `slug`.
-2. Drop the product image at `public/products/<slug>.png`.
+2. Drop the product image at `public/products/<slug>.webp`.
 3. Pick a model type: `bottle · pump · dropper · jar · vial · slim · bar`
    (add a new variant in `components/ProductScene.tsx` if you need a new shape).
 4. Set `featured` / `signature` flags to opt into the cinematic sections.
@@ -64,20 +64,22 @@ photos, **just replace the files** — same names, same paths. Nothing else to c
 
 | Replace this file | With |
 |---|---|
-| `public/products/lush-wood-body-oil.png` | Your Lush Wood Body Oil photo |
-| `public/products/herbal-glow-body-wash.png` | Your Herbal Glow Body Wash photo |
-| `public/products/baovera-hair-oil.png` | Your Baovera Hair Oil photo |
-| `public/products/body-butter.png` | Your Body Butter photo |
-| `public/products/perfume-oil.png` | Your Perfume Oil photo |
-| `public/products/shimmer-oil.png` | Your Shimmer Oil photo |
-| `public/products/black-luxe-soap.png` | Your Black Luxe Soap photo |
+| `public/products/lush-wood-body-oil.webp` | Your Lush Wood Body Oil photo |
+| `public/products/herbal-glow-body-wash.webp` | Your Herbal Glow Body Wash photo |
+| `public/products/baovera-hair-oil.webp` | Your Baovera Hair Oil photo |
+| `public/products/body-butter.webp` | Your Body Butter photo |
+| `public/products/perfume-oil.webp` | Your Perfume Oil photo |
+| `public/products/shimmer-oil.webp` | Your Shimmer Oil photo |
+| `public/products/black-luxe-soap.webp` | Your Black Luxe Soap photo |
 | `public/brand-story.jpg` | Your brand / lifestyle image |
 | `public/icon.svg` | Your logo (favicon + header mark, square) |
 | `public/logo.svg` | Your full logo (header/footer reference) |
 
-Recommended: square images, 1024×1024+, PNG/WebP (Next.js serves AVIF/WebP
-automatically). The favicon/header logo should be a square mark with
-transparency — replace `public/icon.svg` and update nothing else.
+Recommended: square images, 1024×1024+, WebP (30–80 KB each — the site is
+optimized for this format). If your photos are PNG/JPG, either convert them to
+WebP or simply update the `image` field for that product in `lib/products.ts` —
+it is one line per product. The favicon/header logo should be a square mark
+with transparency — replace `public/icon.svg` and update nothing else.
 
 ## ✨ Experience Highlights
 
@@ -95,6 +97,25 @@ transparency — replace `public/icon.svg` and update nothing else.
   testimonials, newsletter, parallax throughout.
 - **Accessible & performant** — semantic HTML, keyboard-friendly, ARIA labels,
   `prefers-reduced-motion` support, lazy loading, static generation.
+
+## ⚡ Performance engineering
+
+- **Deferred WebGL** — three.js / R3F / drei (~830 kB) load only when a 3D
+  scene mounts; first paint ships ~158 kB of JS and a crisp static product
+  visual, then crossfades to the live render when ready.
+- **Viewport gating** — below-the-fold canvases are mounted only as you scroll
+  toward them; canvases pause (`frameloop: "never"`) when off-screen.
+- **Zero-re-render pointer parallax** — mouse tracking runs entirely on motion
+  value springs; the hero never re-renders React on mousemove.
+- **GPU-composited motion** — crossfades use opacity/transform only; no blur
+  filters animated over canvases or large layers.
+- **Optimized imagery** — all product visuals are WebP (~30–80 kB each, 28×
+  smaller than the originals); Next.js serves AVIF/WebP automatically.
+- **Adaptive quality** — mobile / low-core / low-memory devices get DPR 1,
+  fewer particles and a lighter renderer automatically.
+- **Lean load** — `prefers-reduced-motion` disables transform animations via
+  `MotionConfig reducedMotion="user"`; the preloader runs once per session
+  (1.5 s, skipped on revisits); unused deps removed.
 
 ## 📍 Local craft
 
