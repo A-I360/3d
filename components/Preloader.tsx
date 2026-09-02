@@ -15,6 +15,7 @@ export default function Preloader() {
   const [skip] = useState(() => {
     if (typeof window === "undefined") return false;
     try {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return true;
       return sessionStorage.getItem(STORAGE_KEY) === "1";
     } catch {
       return false;
@@ -29,6 +30,10 @@ export default function Preloader() {
     }
     const start = performance.now();
     const dur = 1500;
+
+    /* hard watchdog — the loader can never block the page */
+    const watchdog = window.setTimeout(() => setLoaded(true), 3000);
+
     const tick = (now: number) => {
       const t = Math.min(1, (now - start) / dur);
       const eased = 1 - Math.pow(1 - t, 3);
@@ -41,16 +46,24 @@ export default function Preloader() {
         } catch {
           /* ignore */
         }
-        setTimeout(() => setLoaded(true), 200);
+        window.setTimeout(() => setLoaded(true), 200);
       }
     };
     raf.current = requestAnimationFrame(tick);
+
+    /* belt & braces: never leave the page scroll-locked */
     document.documentElement.style.overflow = "hidden";
     return () => {
       if (raf.current) cancelAnimationFrame(raf.current);
+      window.clearTimeout(watchdog);
       document.documentElement.style.overflow = "";
     };
   }, [loaded, setLoaded, skip]);
+
+  /* release scroll lock the instant we're done */
+  useEffect(() => {
+    if (loaded) document.documentElement.style.overflow = "";
+  }, [loaded]);
 
   if (skip || loaded) return null;
 
