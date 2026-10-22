@@ -639,3 +639,44 @@ html,body,button,a,input,summary{cursor:url('./assets/leaf-cursor.svg') 5 26,aut
   mix-blend-mode: normal;
   opacity: 1;
 }
+
+/* Dedicated size-specific scent selection for the two assorted body-oil products. */
+.productImgLink {display:block;width:100%;height:100%}
+.scentOptionsPage {min-height:calc(100vh - 150px);padding:120px 7vw 115px}
+.scentBackLink {display:inline-flex;align-items:center;gap:8px;margin-bottom:45px;border-bottom:1px solid var(--line);padding-bottom:6px;color:#75675b;text-transform:uppercase;font-size:9px;letter-spacing:.14em}
+.scentOptionsIntro {max-width:760px;margin:0 auto 54px;text-align:center}
+.scentOptionsIntro h1 {font:400 clamp(44px,5.8vw,76px)/1.02 'Playfair Display';margin:0 0 20px}
+.scentOptionsIntro > p:not(.eyebrow) {max-width:540px;margin:0 auto;color:#75675b;font:17px/1.7 'DM Sans',sans-serif}
+.scentOptionsGrid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:25px;max-width:1360px;margin:0 auto}
+.scentOption {min-width:0;display:flex;flex-direction:column;background:#ebe3da;border:1px solid #d9cabe}
+.scentOptionImage {height:350px;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:15px;background:#d8c9ba}
+.scentOptionImage img {display:block;width:100%;height:100%;object-fit:contain;mix-blend-mode:normal}
+.scentOptionCopy {flex:1;display:flex;flex-direction:column;padding:25px 24px 24px}
+.scentOptionCopy .eyebrow {margin:0 0 10px;font-size:9px;letter-spacing:.16em;color:#8b7765}
+.scentOptionCopy h2 {margin:0 0 11px;font:400 29px/1.1 'Playfair Display'}
+.scentOptionCopy > p:not(.eyebrow) {margin:0;color:#75675b;font-size:12px;line-height:1.7}
+.scentOptionPurchase {display:flex;align-items:center;justify-content:space-between;gap:15px;margin-top:auto;padding-top:25px}
+.scentOptionPurchase strong {font:500 20px 'DM Sans',sans-serif;white-space:nowrap}
+.scentOptionPurchase .btn {white-space:nowrap}
+@media(max-width:900px) {
+  .scentOptionsPage {padding-right:5vw;padding-left:5vw}
+  .scentOptionsGrid {grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+}
+@media(max-width:700px) {
+  .scentOptionsPage {padding:82px 22px 78px}
+  .scentBackLink {margin-bottom:35px}
+  .scentOptionsIntro {margin-bottom:38px}
+  .scentOptionsIntro h1 {font-size:clamp(40px,11vw,58px)}
+  .scentOptionsIntro > p:not(.eyebrow) {font-size:15px}
+  .scentOptionsGrid {grid-template-columns:1fr;gap:18px;max-width:480px}
+  .scentOptionImage {height:330px}
+  .scentOptionCopy {padding:22px}
+  .scentOptionCopy h2 {font-size:27px}
+  .scentOptionPurchase {padding-top:20px}
+}
+.scentedBodyOilProductCard .quick {position:absolute;left:50%;bottom:20px;z-index:3;transform:translateX(-50%);padding:11px 15px;background:#f3eee7ed;border:1px solid #fff8;color:var(--ink);white-space:nowrap;font-size:9px;letter-spacing:.13em;text-transform:uppercase}
+.scentedBodyOilProductCard:hover .quick,
+.scentedBodyOilProductCard:focus-within .quick {opacity:1;pointer-events:auto}
+@media(max-width:700px) {
+  .scentedBodyOilProductCard .quick {opacity:1;pointer-events:auto}
+}
