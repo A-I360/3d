@@ -1,5 +1,16 @@
 import React,{useState,useEffect} from 'react';import{createRoot}from'react-dom/client';import{Search,UserRound,ShoppingBag,ArrowUpRight,Plus,Minus,X,Menu,Camera,MessageCircle}from'lucide-react';import'./style.css';import'./motion.css';
-const A='/';
+const imageUrls = import.meta.glob('./assets/*.{png,jpg,jpeg,svg,webp}', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+});
+const A = filename => {
+  const url = imageUrls[`./assets/${filename}`];
+  if (!url) throw new Error(`Missing bundled image asset: ${filename}`);
+  return url;
+};
+const P = path => `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`;
+
 const formatPrice = amount => new Intl.NumberFormat('en-NG', {
   style: 'currency',
   currency: 'NGN',
@@ -313,7 +324,7 @@ const journalArticles = [
   }
 ];
 
-function Loader(){return <div className="loader" role="status" aria-label="Loading AfriEssence"><img className="loaderLogo" src={A+'logo-transparent.png'} alt="AfriEssence"/><div className="loaderLine"><i/></div><small>RESTORE YOUR CONFIDENCE</small></div>}
+function Loader(){return <div className="loader" role="status" aria-label="Loading AfriEssence"><img className="loaderLogo" src={A('logo-transparent.png')} alt="AfriEssence"/><div className="loaderLine"><i/></div><small>RESTORE YOUR CONFIDENCE</small></div>}
 function checkoutUrlFor(cart) {
   const lines = cart.map((product, index) => `${index + 1}. ${product.name} — ${formatPrice(product.price)}`);
   const message = [
@@ -330,8 +341,8 @@ function PageHeader({cartCount, onOpenBag}) {
 
   return <>
     <header className="siteHeader pageHeader">
-      <a className="logo" href="/"><img src={A + 'logo-transparent.png'} alt="AfriEssence"/></a>
-      <nav aria-label="Main navigation">{links.map(([label, href]) => <a key={label} href={href}>{label}</a>)}</nav>
+      <a className="logo" href={P('/')}><img src={A('logo-transparent.png')} alt="AfriEssence"/></a>
+      <nav aria-label="Main navigation">{links.map(([label, href]) => <a key={label} href={P(href)}>{label}</a>)}</nav>
       <div className="pageActions">
         <button className="pageBag" onClick={onOpenBag} aria-label={`Open shopping bag, ${cartCount} items`}>
           <ShoppingBag/><b>{cartCount}</b>
@@ -343,7 +354,7 @@ function PageHeader({cartCount, onOpenBag}) {
     </header>
     {menuOpen && <div className="mobileMenu pageMobileMenu">
       <button className="pageMobileClose" onClick={() => setMenuOpen(false)} aria-label="Close navigation menu"><X/></button>
-      {links.map(([label, href]) => <a key={label} href={href} onClick={() => setMenuOpen(false)}>{label}</a>)}
+      {links.map(([label, href]) => <a key={label} href={P(href)} onClick={() => setMenuOpen(false)}>{label}</a>)}
     </div>}
   </>;
 }
@@ -356,7 +367,7 @@ function CartDrawer({cart, onClose, onRemove, checkoutHref}) {
     </div>
     {cart.length ? <>
       {cart.map((product, index) => <div className="bagItem" key={`${product.slug}-${index}`}>
-        <img src={A + product.img} alt={product.name} loading="lazy" decoding="async"/>
+        <img src={A(product.img)} alt={product.name} loading="lazy" decoding="async"/>
         <div><h3>{product.name}</h3><p>{formatPrice(product.price)}</p></div>
         <button onClick={() => onRemove(index)} aria-label={`Remove ${product.name} from bag`}><X/></button>
       </div>)}
@@ -377,7 +388,7 @@ function ProductPage({product, onAdd, cartCount, onOpenBag}) {
   return <>
     <PageHeader cartCount={cartCount} onOpenBag={onOpenBag}/>
     <main className="productPage">
-      <div className="productPageImage"><img src={A + product.img} alt={product.name}/></div>
+      <div className="productPageImage"><img src={A(product.img)} alt={product.name}/></div>
       <div className="productPageCopy">
         <p className="eyebrow">THE MAKING OF / AFRIESSENCE</p>
         <h1>{product.name}</h1>
@@ -392,7 +403,7 @@ function ProductPage({product, onAdd, cartCount, onOpenBag}) {
         <button className="btn dark" onClick={handleAdd}>{added ? 'Added to bag' : 'Add to bag'} <ArrowUpRight/></button>
       </div>
     </main>
-    <footer><a className="logo" href="/"><img src={A + 'logo-transparent.png'} alt="AfriEssence"/></a><p>Restore your Confidence</p></footer>
+    <footer><a className="logo" href={P('/')}><img src={A('logo-transparent.png')} alt="AfriEssence"/></a><p>Restore your Confidence</p></footer>
   </>;
 }
 function InnerPage({type, onAdd, cartCount, onOpenBag}) {
@@ -411,36 +422,36 @@ function InnerPage({type, onAdd, cartCount, onOpenBag}) {
       <p className="innerIntro">{data[1]}</p>
       {type === 'shop' ? <div className="grid innerGrid">
         {products.map(product => <article className="card" key={product.slug}>
-          <div className="productImg"><img src={A + product.img} alt={product.name} loading="lazy" decoding="async"/><button className="quick" onClick={() => onAdd(product)}>Add to bag <Plus/></button></div>
+          <div className="productImg"><img src={A(product.img)} alt={product.name} loading="lazy" decoding="async"/><button className="quick" onClick={() => onAdd(product)}>Add to bag <Plus/></button></div>
           <div className="cardInfo"><h3>{product.name}</h3><strong>{formatPrice(product.price)}</strong></div>
           <p>{product.desc}</p>
-          <a className="view" href={'/product/' + product.slug}>View product <ArrowUpRight/></a>
+          <a className="view" href={P('/product/' + product.slug)}>View product <ArrowUpRight/></a>
         </article>)}
       </div> : type === 'journal' ? <div className="journalGrid innerJournalGrid">
         {journalArticles.map(article => <article key={article.slug}>
-          <div><a href={'/journal/' + article.slug}><img src={A + article.img} alt={article.title} loading="lazy"/></a></div>
+          <div><a href={P('/journal/' + article.slug)}><img src={A(article.img)} alt={article.title} loading="lazy"/></a></div>
           <span>{article.category} / {article.readTime}</span>
-          <h3><a href={'/journal/' + article.slug}>{article.title}</a></h3>
+          <h3><a href={P('/journal/' + article.slug)}>{article.title}</a></h3>
           <p className="journalExcerpt">{article.intro}</p>
-          <a className="journalRead" href={'/journal/' + article.slug}>Read story <ArrowUpRight/></a>
+          <a className="journalRead" href={P('/journal/' + article.slug)}>Read story <ArrowUpRight/></a>
         </article>)}
       </div> : type === 'contact' ? <div className="pageFeature">
-        <img src={A + 'lush-wood-luxury.png'} alt="AfriEssence botanical beauty"/>
+        <img src={A('lush-wood-luxury.png')} alt="AfriEssence botanical beauty"/>
         <div>
           <h2>Your radiance starts here.</h2>
           <p>For product questions, orders and ritual recommendations, send us a message. We would love to help.</p>
           <a className="btn dark" href="https://wa.me/2348162903238" target="_blank" rel="noreferrer">Chat with us on WhatsApp <ArrowUpRight/></a>
         </div>
       </div> : <div className="pageFeature">
-        <img src={A + 'baovera-luxury.png'} alt="AfriEssence botanical beauty"/>
+        <img src={A('baovera-luxury.png')} alt="AfriEssence botanical beauty"/>
         <div>
           <h2>Beauty, beautifully considered.</h2>
           <p>Thoughtful beauty, warm light and everyday moments made extraordinary. Discover the AfriEssence point of view.</p>
-          <a className="btn dark" href="/shop">Explore the collection <ArrowUpRight/></a>
+          <a className="btn dark" href={P('/shop')}>Explore the collection <ArrowUpRight/></a>
         </div>
       </div>}
     </main>
-    <footer><a className="logo" href="/"><img src={A + 'logo-transparent.png'} alt="AfriEssence"/></a><p>Restore your Confidence</p></footer>
+    <footer><a className="logo" href={P('/')}><img src={A('logo-transparent.png')} alt="AfriEssence"/></a><p>Restore your Confidence</p></footer>
   </>;
 }
 
@@ -458,11 +469,11 @@ function WellnessPage({onAdd, cartCount, onOpenBag}) {
           <p>Wellness does not have to be a grand plan. It can begin with a warm cup, a quiet corner and a few minutes that belong to you. Our Wellness edit puts Herbal Teas at the heart of that everyday pause.</p>
           <div className="wellnessPageActions">
             <a className="btn dark" href="#tea">Meet Herbal Teas <ArrowUpRight/></a>
-            <a className="textLink" href="/journal">Read the journal</a>
+            <a className="textLink" href={P('/journal')}>Read the journal</a>
           </div>
         </div>
         <div className="wellnessPageHeroImage">
-          <img src={A + 'wellness-tea-ritual-editorial.jpg'} alt="Herbal tea sachet beside a warm cup of tea"/>
+          <img src={A('wellness-tea-ritual-editorial.jpg')} alt="Herbal tea sachet beside a warm cup of tea"/>
           <span>THE WELLNESS EDIT / 01</span>
         </div>
       </section>
@@ -481,7 +492,7 @@ function WellnessPage({onAdd, cartCount, onOpenBag}) {
       </section>
 
       <section id="tea" className="teaFeature">
-        <div className="teaFeatureImage"><img src={A + teaProduct.img} alt="A single AfriEssence Herbal Teas sachet" loading="lazy" decoding="async"/></div>
+        <div className="teaFeatureImage"><img src={A(teaProduct.img)} alt="A single AfriEssence Herbal Teas sachet" loading="lazy" decoding="async"/></div>
         <div className="teaFeatureCopy">
           <p className="eyebrow">THE WELLNESS EDIT / HERBAL TEAS</p>
           <h2>A cup for<br/><i>the in-between.</i></h2>
@@ -490,7 +501,7 @@ function WellnessPage({onAdd, cartCount, onOpenBag}) {
           <div className="teaFeaturePrice"><span>AFRIESSENCE HERBAL TEAS</span><strong>{formatPrice(teaProduct.price)}</strong></div>
           <div className="wellnessPageActions">
             <button className="btn dark" onClick={() => onAdd(teaProduct)}>Add to bag <Plus/></button>
-            <a className="textLink" href="/product/herbal-teas">View product details <ArrowUpRight/></a>
+            <a className="textLink" href={P('/product/herbal-teas')}>View product details <ArrowUpRight/></a>
           </div>
         </div>
       </section>
@@ -514,14 +525,14 @@ function WellnessPage({onAdd, cartCount, onOpenBag}) {
         </div>
         <div className="journalGrid">
           {wellnessArticles.map(article => <article key={article.slug}>
-            <div><a href={'/journal/' + article.slug}><img src={A + article.img} alt={article.title} loading="lazy"/></a></div>
+            <div><a href={P('/journal/' + article.slug)}><img src={A(article.img)} alt={article.title} loading="lazy"/></a></div>
             <span>{article.readTime}</span>
-            <h3><a href={'/journal/' + article.slug}>{article.title}</a></h3>
+            <h3><a href={P('/journal/' + article.slug)}>{article.title}</a></h3>
             <p className="journalExcerpt">{article.intro}</p>
-            <a className="journalRead" href={'/journal/' + article.slug}>Read story <ArrowUpRight/></a>
+            <a className="journalRead" href={P('/journal/' + article.slug)}>Read story <ArrowUpRight/></a>
           </article>)}
         </div>
-        <a className="journalAllLink" href="/journal">Explore the full journal <ArrowUpRight/></a>
+        <a className="journalAllLink" href={P('/journal')}>Explore the full journal <ArrowUpRight/></a>
       </section>
 
       <section className="wellnessClosing">
@@ -530,11 +541,11 @@ function WellnessPage({onAdd, cartCount, onOpenBag}) {
         <p>Discover the Herbal Teas ritual or keep reading for more ideas to make everyday care feel a little more considered.</p>
         <div className="wellnessPageActions">
           <a className="btn dark" href="#tea">Explore Herbal Teas <ArrowUpRight/></a>
-          <a className="textLink" href="/journal">Visit the journal</a>
+          <a className="textLink" href={P('/journal')}>Visit the journal</a>
         </div>
       </section>
     </main>
-    <footer><a className="logo" href="/"><img src={A + 'logo-transparent.png'} alt="AfriEssence"/></a><p>Restore your Confidence</p></footer>
+    <footer><a className="logo" href={P('/')}><img src={A('logo-transparent.png')} alt="AfriEssence"/></a><p>Restore your Confidence</p></footer>
   </>;
 }
 
@@ -543,11 +554,11 @@ function JournalArticlePage({article, cartCount, onOpenBag}) {
   return <>
     <PageHeader cartCount={cartCount} onOpenBag={onOpenBag}/>
     <main className="journalArticlePage">
-      <a className="backToJournal" href="/journal">← Back to the journal</a>
+      <a className="backToJournal" href={P('/journal')}>← Back to the journal</a>
       <p className="eyebrow">{article.category} / {article.readTime}</p>
       <h1>{article.title}</h1>
       <p className="articleIntro">{article.intro}</p>
-      <div className="articleImage"><img src={A + article.img} alt={article.title}/></div>
+      <div className="articleImage"><img src={A(article.img)} alt={article.title}/></div>
       <article className="articleBody">
         {article.sections.map((section, sectionIndex) => <section className="articleSection" key={section.heading}>
           <h2>{section.heading}</h2>
@@ -555,11 +566,11 @@ function JournalArticlePage({article, cartCount, onOpenBag}) {
         </section>)}
       </article>
       <div className="articleActions">
-        <a className="btn dark" href="/shop">Explore the collection <ArrowUpRight/></a>
-        <a className="textLink" href="/journal">More from the journal</a>
+        <a className="btn dark" href={P('/shop')}>Explore the collection <ArrowUpRight/></a>
+        <a className="textLink" href={P('/journal')}>More from the journal</a>
       </div>
     </main>
-    <footer><a className="logo" href="/"><img src={A + 'logo-transparent.png'} alt="AfriEssence"/></a><p>Restore your Confidence</p></footer>
+    <footer><a className="logo" href={P('/')}><img src={A('logo-transparent.png')} alt="AfriEssence"/></a><p>Restore your Confidence</p></footer>
   </>;
 }
 
@@ -570,10 +581,10 @@ function NotFoundPage({cartCount, onOpenBag}) {
       <p className="eyebrow">AFRIESSENCE / 404</p>
       <h1>That page has wandered.</h1>
       <p className="innerIntro">The page you’re looking for isn’t here. Let’s find your way back to something beautiful.</p>
-      <a className="btn dark" href="/shop">Browse the collection <ArrowUpRight/></a>
-      <a className="textLink" href="/">Return home</a>
+      <a className="btn dark" href={P('/shop')}>Browse the collection <ArrowUpRight/></a>
+      <a className="textLink" href={P('/')}>Return home</a>
     </main>
-    <footer><a className="logo" href="/"><img src={A + 'logo-transparent.png'} alt="AfriEssence"/></a><p>Restore your Confidence</p></footer>
+    <footer><a className="logo" href={P('/')}><img src={A('logo-transparent.png')} alt="AfriEssence"/></a><p>Restore your Confidence</p></footer>
   </>;
 }
-function App(){const[loading,setLoading]=useState(true),[cart,setCart]=useState(()=>{try{const saved=JSON.parse(window.localStorage.getItem('afriessence-cart')||'[]');return Array.isArray(saved)?saved.map(item=>products.find(product=>product.slug===item?.slug)).filter(Boolean):[]}catch{return[]}}),[filter,setFilter]=useState('ALL'),[bag,setBag]=useState(false),[menu,setMenu]=useState(false),[scrolled,setScrolled]=useState(false);useEffect(()=>{const timer=setTimeout(()=>setLoading(false),1400);return()=>clearTimeout(timer)},[]);useEffect(()=>{const onScroll=()=>setScrolled(window.scrollY>30);window.addEventListener('scroll',onScroll);return()=>window.removeEventListener('scroll',onScroll)},[]);useEffect(()=>{const move=(x,y)=>{document.documentElement.style.setProperty('--sensor-x',`${x}px`);document.documentElement.style.setProperty('--sensor-y',`${y}px`)};const pointer=e=>move((e.clientX/window.innerWidth-.5)*8,(e.clientY/window.innerHeight-.5)*8);const orient=e=>move((e.gamma||0)/8,(e.beta||0)/10);window.addEventListener('pointermove',pointer,{passive:true});window.addEventListener('deviceorientation',orient,{passive:true});return()=>{window.removeEventListener('pointermove',pointer);window.removeEventListener('deviceorientation',orient)}},[]);useEffect(()=>{try{window.localStorage.setItem('afriessence-cart',JSON.stringify(cart))}catch{}},[cart]);if(loading)return <Loader/>;const add=p=>{setCart(current=>[...current,p]);setBag(true)};const removeFromBag=index=>setCart(current=>current.filter((_,i)=>i!==index));const checkoutHref=checkoutUrlFor(cart);const cartDrawer=bag?<CartDrawer cart={cart} onClose={()=>setBag(false)} onRemove={removeFromBag} checkoutHref={checkoutHref}/>:null;const pathname=window.location.pathname.replace(/\/+$/, '')||'/';const productSlug=pathname.startsWith('/product/')?pathname.slice('/product/'.length):null;const productPage=products.find(p=>p.slug===productSlug);const journalSlug=pathname.startsWith('/journal/')?pathname.slice('/journal/'.length):null;const journalArticle=journalArticles.find(article=>article.slug===journalSlug);if(productPage)return <><ProductPage product={productPage} onAdd={add} cartCount={cart.length} onOpenBag={()=>setBag(true)}/>{cartDrawer}</>;if(journalArticle)return <><JournalArticlePage article={journalArticle} cartCount={cart.length} onOpenBag={()=>setBag(true)}/>{cartDrawer}</>;if(pathname==='/wellness')return <><WellnessPage onAdd={add} cartCount={cart.length} onOpenBag={()=>setBag(true)}/>{cartDrawer}</>;if(['/shop','/about','/journal','/contact'].includes(pathname))return <><InnerPage type={pathname.slice(1)} onAdd={add} cartCount={cart.length} onOpenBag={()=>setBag(true)}/>{cartDrawer}</>;if(pathname!=='/')return <><NotFoundPage cartCount={cart.length} onOpenBag={()=>setBag(true)}/>{cartDrawer}</>;const shown=filter==='ALL'?products:products.filter(p=>p.cat===filter);return <><header className={`siteHeader ${scrolled ? 'scrolled' : ''}`}><a className="logo" href="#top"><img src={A+'logo-transparent.png'} alt="AfriEssence"/></a><nav>{['HOME','SHOP','WELLNESS','ABOUT','JOURNAL','CONTACT'].map(x=><a href={x==='HOME'?'/':x==='SHOP'?'/shop':x==='WELLNESS'?'/wellness':x==='ABOUT'?'/about':x==='JOURNAL'?'/journal':'/contact'}>{x}</a>)}</nav><div className="actions"><button aria-label="Search"><Search/></button><button aria-label="Account"><UserRound/></button><button className="bag" onClick={()=>setBag(true)} aria-label="Shopping bag"><ShoppingBag/><b>{cart.length}</b></button><button className="men" onClick={()=>setMenu(!menu)}><Menu/></button></div></header>{menu&&<div className="mobileMenu"><button onClick={()=>setMenu(false)}><X/></button>{['HOME','SHOP','WELLNESS','ABOUT','JOURNAL','CONTACT'].map(x=><a href={x==='HOME'?'/':x==='SHOP'?'/shop':x==='WELLNESS'?'/wellness':x==='ABOUT'?'/about':x==='JOURNAL'?'/journal':'/contact'} onClick={()=>setMenu(false)}>{x}</a>)}</div>}<main id="top"><section className="hero"><div className="heroCopy"><h1>Restore your<br/><i>Confidence.</i></h1><p className="lead">Thoughtfully crafted beauty essentials inspired by nature, created to nourish, elevate and reveal your natural radiance.</p><div><a className="btn dark" href="#shop">Shop the collection <ArrowUpRight/></a><a className="textLink" href="#about">Discover AfriEssence</a></div></div></section><section className="marquee"><span>Nature, elevated</span><span>✦</span><span>Made for your ritual</span><span>✦</span><span>Nature, elevated</span></section><section id="shop" className="collection"><div className="sectionHead"><div><p className="eyebrow">THE COLLECTION / {String(products.length).padStart(2,'0')}</p><h2>Beauty, in its<br/><i>many rituals.</i></h2></div><p>Discover thoughtful essentials for hair, body, skin and everyday radiance.</p></div><div className="filters">{['ALL','BODY','HAIR','SKIN','CLEANSING','RADIANCE','WELLNESS'].map(x=><button key={x} className={filter===x?'active':''} onClick={()=>setFilter(x)}>{x}</button>)}</div><div className="grid">{shown.map(p=><article className="card" key={p.slug}><div className="productImg"><img src={A+p.img} alt={p.name} loading="lazy" decoding="async"/><button className="quick" onClick={()=>add(p)}>Add to bag <Plus/></button></div><div className="cardInfo"><div><h3>{p.name}</h3><p>{p.desc}</p><details className="storyDetails"><summary>Creation story</summary><p>{stories[p.slug]}</p><a className="storyRead" href={'/product/'+p.slug}>Read the full story <ArrowUpRight/></a></details></div><strong>{formatPrice(p.price)}</strong></div><a className="view" href={'/product/'+p.slug}>View product <ArrowUpRight/></a></article>)}</div></section><section id="about" className="story"><div className="storyImg"><img src={A+'baovera-model.jpg'}/></div><div className="storyCopy"><p className="eyebrow">THE AFRIESSENCE PHILOSOPHY</p><h2>Rooted in nature.<br/><i>Crafted for radiance.</i></h2><p>AfriEssence is an invitation to slow down and return to yourself. Inspired by the richness of Africa and the quiet intelligence of nature, we create modern rituals that make everyday care feel extraordinary.</p><a className="textLink" href="/about">Our story <ArrowUpRight/></a></div></section><section id="journey" className="journey"><div><p className="eyebrow">THE AFRIESSENCE JOURNEY</p><h2>From our roots<br/><i>to your ritual.</i></h2><p>Born from a love of African botanicals and modern self-care, AfriEssence is a journey of discovery. Every blend is made to bring you closer to nature, and closer to yourself.</p><a className="textLink" href="/about">Read our story <ArrowUpRight/></a></div><div className="journeySteps"><div><b>01</b><span>ROOTED</span><p>Inspired by the richness of the continent.</p></div><div><b>02</b><span>CRAFTED</span><p>Thoughtful formulas for modern rituals.</p></div><div><b>03</b><span>RADIANT</span><p>Made to reveal your everyday glow.</p></div></div></section><section id="rituals" className="rituals"><div className="ritualImg"><img src={A+'black-luxe-cleanser-editorial-final.jpg'} alt="AfriEssence Black Luxe Soap in a clear jar"/></div><div className="ritualCopy"><p className="eyebrow">A DAILY MOMENT</p><h2>Morning<br/><i>rituals.</i></h2><p>Begin softly with Black Luxe Soap. Cleanse, nourish and let a little light in before the day begins.</p><div className="ritualList"><span><b>01</b> Cleanse with intention</span><span><b>02</b> Nourish your skin</span><span><b>03</b> Seal in your radiance</span></div><a className="btn dark" href="#shop">Build your ritual <ArrowUpRight/></a></div></section><section id="wellness" className="wellness"><div className="wellnessVisual"><img src={A+'herbal-tea-sachet-editorial.jpg'} alt="A single herbal tea sachet for a quiet tea ritual" loading="lazy" decoding="async"/><span className="wellnessIndex">01 / HERBAL TEAS</span></div><div className="wellnessCopy"><p className="eyebrow">WELLNESS / MAKE SPACE TO PAUSE</p><h2>A quieter<br/><i>kind of ritual.</i></h2><p>Settle into the day with a cup of AfriEssence Herbal Teas. A simple botanical infusion, made for a moment to pause, sip and return to yourself.</p><div className="wellnessProduct"><div><span>THE WELLNESS EDIT</span><h3>Herbal Teas</h3></div><strong>{formatPrice(1500)}</strong></div><div className="wellnessActions"><button className="btn dark" onClick={()=>add(products.find(p=>p.slug==='herbal-teas'))}>Add Herbal Teas <Plus/></button><a className="textLink" href="/wellness">Explore Wellness <ArrowUpRight/></a></div></div></section><section className="quote"><p className="eyebrow">A NOTE FROM OUR COMMUNITY</p><blockquote>“A beautiful new ritual<br/> in my everyday routine.”</blockquote><span>— AMARA K. / VERIFIED CUSTOMER</span></section><section className="glowEdit"><p className="eyebrow">THE GLOW EDIT / WHY AFRIESSENCE</p><h2>Small moments.<br/><i>Lasting radiance.</i></h2><div className="glowCards"><div><span>01</span><h3>Nourish</h3><p>Rich textures that leave skin and hair feeling cared for, never coated.</p></div><div><span>02</span><h3>Layer</h3><p>Build a personal signature with oils, fragrance and luminous finishes.</p></div><div><span>03</span><h3>Glow</h3><p>Let your natural beauty take the room, softly and confidently.</p></div></div><a className="btn dark" href="#shop">Find your glow <ArrowUpRight/></a></section><section className="ingredients"><div className="ingredientsIntro"><p className="eyebrow">THE INGREDIENT EDIT</p><h2>Nature,<br/><i>considered.</i></h2><p>We look to the earth for what works beautifully. Familiar botanicals, considered carefully, blended for modern skin and hair.</p><a className="textLink" href="#shop">Explore ingredients <ArrowUpRight/></a></div><div className="ingredientTiles"><div><span>01</span><h3>Baobab</h3><p>Rich, nourishing and deeply connected to African soil.</p></div><div><span>02</span><h3>Shea</h3><p>A velvety botanical butter for comfort and care.</p></div><div><span>03</span><h3>Botanicals</h3><p>Plant-powered notes that turn care into ritual.</p></div></div></section><section id="journal" className="journal"><div className="journalHead"><div><p className="eyebrow">THE AFRIESSENCE JOURNAL</p><h2>Notes on<br/><i>radiance.</i></h2></div><p>Thoughts, rituals and small discoveries for a more beautiful everyday.</p></div><div className="journalGrid">{journalArticles.slice(0,3).map(article=><article key={article.slug}><div><a href={'/journal/'+article.slug}><img src={A+article.img} alt={article.title} loading="lazy"/></a></div><span>{article.category} / {article.readTime}</span><h3><a href={'/journal/'+article.slug}>{article.title}</a></h3><p className="journalExcerpt">{article.intro}</p><a className="journalRead" href={'/journal/'+article.slug}>Read story <ArrowUpRight/></a></article>)}</div><a className="journalAllLink" href="/journal">Explore all journal stories <ArrowUpRight/></a></section><section className="newsletter"><p className="eyebrow">STAY IN THE GLOW</p><h2>Join the <i>radiance.</i></h2><p>New rituals, beauty stories and a little more light in your inbox.</p><form onSubmit={e=>e.preventDefault()}><input placeholder="Your email address" type="email"/><button className="btn dark">Subscribe <ArrowUpRight/></button></form></section></main><footer><div><a className="logo" href="/">AFRI<span>ESSENCE</span></a><p>Restore your Confidence</p></div><div className="footlinks"><a href="/shop">Shop</a><a href="/wellness">Wellness</a><a href="/about">About</a><a href="/journal">Journal</a><a href="/contact">Contact</a></div><div className="social"><a className="social3d" href="https://instagram.com/afri.essence__" target="_blank" rel="noreferrer"><Camera/> Instagram <b>@afri.essence__</b></a><a className="social3d" href="https://wa.me/2348162903238" target="_blank" rel="noreferrer"><MessageCircle/> WhatsApp <b>08162903238</b></a><a className="social3d" href="https://tiktok.com/@afriessenceholistics" target="_blank" rel="noreferrer"><span className="tik">♪</span> TikTok <b>@afriessenceholistics</b></a><span>© 2024 AFRIESSENCE</span></div></footer>{cartDrawer}</>};createRoot(document.getElementById('root')).render(<App/>);
+function App(){const[loading,setLoading]=useState(true),[cart,setCart]=useState(()=>{try{const saved=JSON.parse(window.localStorage.getItem('afriessence-cart')||'[]');return Array.isArray(saved)?saved.map(item=>products.find(product=>product.slug===item?.slug)).filter(Boolean):[]}catch{return[]}}),[filter,setFilter]=useState('ALL'),[bag,setBag]=useState(false),[menu,setMenu]=useState(false),[scrolled,setScrolled]=useState(false);useEffect(()=>{const timer=setTimeout(()=>setLoading(false),1400);return()=>clearTimeout(timer)},[]);useEffect(()=>{const onScroll=()=>setScrolled(window.scrollY>30);window.addEventListener('scroll',onScroll);return()=>window.removeEventListener('scroll',onScroll)},[]);useEffect(()=>{const move=(x,y)=>{document.documentElement.style.setProperty('--sensor-x',`${x}px`);document.documentElement.style.setProperty('--sensor-y',`${y}px`)};const pointer=e=>move((e.clientX/window.innerWidth-.5)*8,(e.clientY/window.innerHeight-.5)*8);const orient=e=>move((e.gamma||0)/8,(e.beta||0)/10);window.addEventListener('pointermove',pointer,{passive:true});window.addEventListener('deviceorientation',orient,{passive:true});return()=>{window.removeEventListener('pointermove',pointer);window.removeEventListener('deviceorientation',orient)}},[]);useEffect(()=>{try{window.localStorage.setItem('afriessence-cart',JSON.stringify(cart))}catch{}},[cart]);if(loading)return <Loader/>;const add=p=>{setCart(current=>[...current,p]);setBag(true)};const removeFromBag=index=>setCart(current=>current.filter((_,i)=>i!==index));const checkoutHref=checkoutUrlFor(cart);const cartDrawer=bag?<CartDrawer cart={cart} onClose={()=>setBag(false)} onRemove={removeFromBag} checkoutHref={checkoutHref}/>:null;const rawPath=window.location.pathname;const basePath=import.meta.env.BASE_URL;const appPath=basePath!=='/'&&rawPath.startsWith(basePath)?rawPath.slice(basePath.length):rawPath;const pathname='/'+appPath.split('/').filter(Boolean).join('/');const productSlug=pathname.startsWith('/product/')?pathname.slice('/product/'.length):null;const productPage=products.find(p=>p.slug===productSlug);const journalSlug=pathname.startsWith('/journal/')?pathname.slice('/journal/'.length):null;const journalArticle=journalArticles.find(article=>article.slug===journalSlug);if(productPage)return <><ProductPage product={productPage} onAdd={add} cartCount={cart.length} onOpenBag={()=>setBag(true)}/>{cartDrawer}</>;if(journalArticle)return <><JournalArticlePage article={journalArticle} cartCount={cart.length} onOpenBag={()=>setBag(true)}/>{cartDrawer}</>;if(pathname==='/wellness')return <><WellnessPage onAdd={add} cartCount={cart.length} onOpenBag={()=>setBag(true)}/>{cartDrawer}</>;if(['/shop','/about','/journal','/contact'].includes(pathname))return <><InnerPage type={pathname.slice(1)} onAdd={add} cartCount={cart.length} onOpenBag={()=>setBag(true)}/>{cartDrawer}</>;if(pathname!=='/')return <><NotFoundPage cartCount={cart.length} onOpenBag={()=>setBag(true)}/>{cartDrawer}</>;const shown=filter==='ALL'?products:products.filter(p=>p.cat===filter);return <><header className={`siteHeader ${scrolled ? 'scrolled' : ''}`}><a className="logo" href="#top"><img src={A('logo-transparent.png')} alt="AfriEssence"/></a><nav>{['HOME','SHOP','WELLNESS','ABOUT','JOURNAL','CONTACT'].map(x=><a href={P(x==='HOME'?'/':x==='SHOP'?'/shop':x==='WELLNESS'?'/wellness':x==='ABOUT'?'/about':x==='JOURNAL'?'/journal':'/contact')}>{x}</a>)}</nav><div className="actions"><button aria-label="Search"><Search/></button><button aria-label="Account"><UserRound/></button><button className="bag" onClick={()=>setBag(true)} aria-label="Shopping bag"><ShoppingBag/><b>{cart.length}</b></button><button className="men" onClick={()=>setMenu(!menu)}><Menu/></button></div></header>{menu&&<div className="mobileMenu"><button onClick={()=>setMenu(false)}><X/></button>{['HOME','SHOP','WELLNESS','ABOUT','JOURNAL','CONTACT'].map(x=><a href={P(x==='HOME'?'/':x==='SHOP'?'/shop':x==='WELLNESS'?'/wellness':x==='ABOUT'?'/about':x==='JOURNAL'?'/journal':'/contact')} onClick={()=>setMenu(false)}>{x}</a>)}</div>}<main id="top"><section className="hero"><div className="heroCopy"><h1>Restore your<br/><i>Confidence.</i></h1><p className="lead">Thoughtfully crafted beauty essentials inspired by nature, created to nourish, elevate and reveal your natural radiance.</p><div><a className="btn dark" href="#shop">Shop the collection <ArrowUpRight/></a><a className="textLink" href="#about">Discover AfriEssence</a></div></div></section><section className="marquee"><span>Nature, elevated</span><span>✦</span><span>Made for your ritual</span><span>✦</span><span>Nature, elevated</span></section><section id="shop" className="collection"><div className="sectionHead"><div><p className="eyebrow">THE COLLECTION / {String(products.length).padStart(2,'0')}</p><h2>Beauty, in its<br/><i>many rituals.</i></h2></div><p>Discover thoughtful essentials for hair, body, skin and everyday radiance.</p></div><div className="filters">{['ALL','BODY','HAIR','SKIN','CLEANSING','RADIANCE','WELLNESS'].map(x=><button key={x} className={filter===x?'active':''} onClick={()=>setFilter(x)}>{x}</button>)}</div><div className="grid">{shown.map(p=><article className="card" key={p.slug}><div className="productImg"><img src={A(p.img)} alt={p.name} loading="lazy" decoding="async"/><button className="quick" onClick={()=>add(p)}>Add to bag <Plus/></button></div><div className="cardInfo"><div><h3>{p.name}</h3><p>{p.desc}</p><details className="storyDetails"><summary>Creation story</summary><p>{stories[p.slug]}</p><a className="storyRead" href={P('/product/'+p.slug)}>Read the full story <ArrowUpRight/></a></details></div><strong>{formatPrice(p.price)}</strong></div><a className="view" href={P('/product/'+p.slug)}>View product <ArrowUpRight/></a></article>)}</div></section><section id="about" className="story"><div className="storyImg"><img src={A('baovera-model.jpg')}/></div><div className="storyCopy"><p className="eyebrow">THE AFRIESSENCE PHILOSOPHY</p><h2>Rooted in nature.<br/><i>Crafted for radiance.</i></h2><p>AfriEssence is an invitation to slow down and return to yourself. Inspired by the richness of Africa and the quiet intelligence of nature, we create modern rituals that make everyday care feel extraordinary.</p><a className="textLink" href={P('/about')}>Our story <ArrowUpRight/></a></div></section><section id="journey" className="journey"><div><p className="eyebrow">THE AFRIESSENCE JOURNEY</p><h2>From our roots<br/><i>to your ritual.</i></h2><p>Born from a love of African botanicals and modern self-care, AfriEssence is a journey of discovery. Every blend is made to bring you closer to nature, and closer to yourself.</p><a className="textLink" href={P('/about')}>Read our story <ArrowUpRight/></a></div><div className="journeySteps"><div><b>01</b><span>ROOTED</span><p>Inspired by the richness of the continent.</p></div><div><b>02</b><span>CRAFTED</span><p>Thoughtful formulas for modern rituals.</p></div><div><b>03</b><span>RADIANT</span><p>Made to reveal your everyday glow.</p></div></div></section><section id="rituals" className="rituals"><div className="ritualImg"><img src={A('black-luxe-cleanser-editorial-final.jpg')} alt="AfriEssence Black Luxe Soap in a clear jar"/></div><div className="ritualCopy"><p className="eyebrow">A DAILY MOMENT</p><h2>Morning<br/><i>rituals.</i></h2><p>Begin softly with Black Luxe Soap. Cleanse, nourish and let a little light in before the day begins.</p><div className="ritualList"><span><b>01</b> Cleanse with intention</span><span><b>02</b> Nourish your skin</span><span><b>03</b> Seal in your radiance</span></div><a className="btn dark" href="#shop">Build your ritual <ArrowUpRight/></a></div></section><section id="wellness" className="wellness"><div className="wellnessVisual"><img src={A('herbal-tea-sachet-editorial.jpg')} alt="A single herbal tea sachet for a quiet tea ritual" loading="lazy" decoding="async"/><span className="wellnessIndex">01 / HERBAL TEAS</span></div><div className="wellnessCopy"><p className="eyebrow">WELLNESS / MAKE SPACE TO PAUSE</p><h2>A quieter<br/><i>kind of ritual.</i></h2><p>Settle into the day with a cup of AfriEssence Herbal Teas. A simple botanical infusion, made for a moment to pause, sip and return to yourself.</p><div className="wellnessProduct"><div><span>THE WELLNESS EDIT</span><h3>Herbal Teas</h3></div><strong>{formatPrice(1500)}</strong></div><div className="wellnessActions"><button className="btn dark" onClick={()=>add(products.find(p=>p.slug==='herbal-teas'))}>Add Herbal Teas <Plus/></button><a className="textLink" href={P('/wellness')}>Explore Wellness <ArrowUpRight/></a></div></div></section><section className="quote"><p className="eyebrow">A NOTE FROM OUR COMMUNITY</p><blockquote>“A beautiful new ritual<br/> in my everyday routine.”</blockquote><span>— AMARA K. / VERIFIED CUSTOMER</span></section><section className="glowEdit"><p className="eyebrow">THE GLOW EDIT / WHY AFRIESSENCE</p><h2>Small moments.<br/><i>Lasting radiance.</i></h2><div className="glowCards"><div><span>01</span><h3>Nourish</h3><p>Rich textures that leave skin and hair feeling cared for, never coated.</p></div><div><span>02</span><h3>Layer</h3><p>Build a personal signature with oils, fragrance and luminous finishes.</p></div><div><span>03</span><h3>Glow</h3><p>Let your natural beauty take the room, softly and confidently.</p></div></div><a className="btn dark" href="#shop">Find your glow <ArrowUpRight/></a></section><section className="ingredients"><div className="ingredientsIntro"><p className="eyebrow">THE INGREDIENT EDIT</p><h2>Nature,<br/><i>considered.</i></h2><p>We look to the earth for what works beautifully. Familiar botanicals, considered carefully, blended for modern skin and hair.</p><a className="textLink" href="#shop">Explore ingredients <ArrowUpRight/></a></div><div className="ingredientTiles"><div><span>01</span><h3>Baobab</h3><p>Rich, nourishing and deeply connected to African soil.</p></div><div><span>02</span><h3>Shea</h3><p>A velvety botanical butter for comfort and care.</p></div><div><span>03</span><h3>Botanicals</h3><p>Plant-powered notes that turn care into ritual.</p></div></div></section><section id="journal" className="journal"><div className="journalHead"><div><p className="eyebrow">THE AFRIESSENCE JOURNAL</p><h2>Notes on<br/><i>radiance.</i></h2></div><p>Thoughts, rituals and small discoveries for a more beautiful everyday.</p></div><div className="journalGrid">{journalArticles.slice(0,3).map(article=><article key={article.slug}><div><a href={P('/journal/'+article.slug)}><img src={A(article.img)} alt={article.title} loading="lazy"/></a></div><span>{article.category} / {article.readTime}</span><h3><a href={P('/journal/'+article.slug)}>{article.title}</a></h3><p className="journalExcerpt">{article.intro}</p><a className="journalRead" href={P('/journal/'+article.slug)}>Read story <ArrowUpRight/></a></article>)}</div><a className="journalAllLink" href={P('/journal')}>Explore all journal stories <ArrowUpRight/></a></section><section className="newsletter"><p className="eyebrow">STAY IN THE GLOW</p><h2>Join the <i>radiance.</i></h2><p>New rituals, beauty stories and a little more light in your inbox.</p><form onSubmit={e=>e.preventDefault()}><input placeholder="Your email address" type="email"/><button className="btn dark">Subscribe <ArrowUpRight/></button></form></section></main><footer><div><a className="logo" href={P('/')}>AFRI<span>ESSENCE</span></a><p>Restore your Confidence</p></div><div className="footlinks"><a href={P('/shop')}>Shop</a><a href={P('/wellness')}>Wellness</a><a href={P('/about')}>About</a><a href={P('/journal')}>Journal</a><a href={P('/contact')}>Contact</a></div><div className="social"><a className="social3d" href="https://instagram.com/afri.essence__" target="_blank" rel="noreferrer"><Camera/> Instagram <b>@afri.essence__</b></a><a className="social3d" href="https://wa.me/2348162903238" target="_blank" rel="noreferrer"><MessageCircle/> WhatsApp <b>08162903238</b></a><a className="social3d" href="https://tiktok.com/@afriessenceholistics" target="_blank" rel="noreferrer"><span className="tik">♪</span> TikTok <b>@afriessenceholistics</b></a><span>© 2024 AFRIESSENCE</span></div></footer>{cartDrawer}</>};createRoot(document.getElementById('root')).render(<App/>);
