@@ -697,3 +697,43 @@ html,body,button,a,input,summary{cursor:url('./assets/leaf-cursor.svg') 5 26,aut
   letter-spacing:.15em;
   text-align:center;
 }
+
+/* Larger, sharper brand marks across the header and every page footer. */
+.siteHeader .logo img,
+.siteHeader.pageHeader .logo img {
+  width:190px;
+  height:62px;
+  object-fit:contain;
+  transform:none;
+}
+.siteHeader.scrolled .logo img {width:180px;height:58px}
+footer .logo {display:inline-flex;align-items:center;justify-content:center}
+footer .logo img {
+  display:block;
+  width:min(300px,72vw);
+  max-width:72vw;
+  height:154px;
+  object-fit:contain;
+  transform:none;
+}
+
+/* The fixed mark is rendered only by inner-page headers, never on the homepage. */
+.siteWatermark {
+  position:fixed;
+  inset:0;
+  z-index:4;
+  pointer-events:none;
+  background-image:url('./assets/logo-transparent-trim.png');
+  background-repeat:no-repeat;
+  background-position:center 54%;
+  background-size:min(82vw,920px) auto;
+  opacity:.045;
+  mix-blend-mode:multiply;
+}
+@media(max-width:850px) {
+  .siteHeader .logo img,
+  .siteHeader.pageHeader .logo img {width:166px;height:56px}
+  .siteHeader.scrolled .logo img {width:158px;height:52px}
+  footer .logo img {width:min(270px,82vw);max-width:82vw;height:140px}
+  .siteWatermark {background-size:88vw auto;opacity:.04}
+}
